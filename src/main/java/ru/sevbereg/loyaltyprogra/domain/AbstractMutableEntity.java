@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -30,10 +31,10 @@ public class AbstractMutableEntity extends AbstractIdentifiableEntity {
 //    private String sbId;
 
     @Column(name = "c_creat_date")
-    private Instant creatDate;
+    private LocalDateTime creatDate;
 
     @Column(name = "c_update_date")
-    private Instant updateDate;
+    private LocalDateTime updateDate;
 
     @Column(name = "c_is_active")
     private boolean isActive = true;
@@ -41,7 +42,7 @@ public class AbstractMutableEntity extends AbstractIdentifiableEntity {
     @PrePersist
     private void prePersist() {
         if (Objects.isNull(updateDate)) {
-            updateDate = Instant.now();
+            updateDate = LocalDateTime.now();
         }
     }
 

@@ -39,11 +39,5 @@ public class LoyaltyTier extends AbstractMutableEntity {
 
     @Column(name = "c_benefit")
     private String benefit;
-
-    /**
-     * Доступность бронирования без предоплаты
-     */
-    @Column(name = "c_is_available_booking")
-    private boolean isAvailableBooking;
     
 }

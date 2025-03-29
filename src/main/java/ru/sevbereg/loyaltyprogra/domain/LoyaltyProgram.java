@@ -12,7 +12,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -20,6 +22,12 @@ import java.util.Set;
 @Accessors(chain = true)
 @Table(name = "t_loyalty_program")
 public class LoyaltyProgram extends AbstractMutableEntity {
+
+    /**
+     * Ключ идемпотентности
+     */
+    @Column(name = "c_external_id", nullable = false, unique = true)
+    private UUID externalId;
 
     @Column(name = "c_lp_name")
     private String lpName;
@@ -36,9 +44,9 @@ public class LoyaltyProgram extends AbstractMutableEntity {
     private Set<LoyaltyTier> tiers;
 
     @Column(name = "c_start_date")
-    private Instant startDate;
+    private LocalDate startDate;
 
     @Column(name = "c_end_date")
-    private Instant endDate;
+    private LocalDate endDate;
 
 }

@@ -30,10 +30,16 @@ public class Card extends AbstractMutableEntity {
     private Long cardNumber;
 
     /**
+     * Доступность бронирования без предоплаты
+     */
+    @Column(name = "c_is_available_booking")
+    private boolean isAvailableBooking;
+
+    /**
      * Кол-во отмененных или перенесенных заездов
      */
     @Column(name = "c_sum_cancelled_check_in")
-    private Integer sumCancelledCheckIn;
+    private int sumCancelledCheckIn;
 
     @Column(name = "c_bonus_balance")
     private BigDecimal bonusBalance;

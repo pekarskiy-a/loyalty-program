@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -40,6 +41,6 @@ public class AbstractPerson extends AbstractMutableEntity {
     private String patronymic;
 
     @Column(name = "c_birthdate")
-    private Instant birthdate;
+    private LocalDate birthdate;
 
 }
