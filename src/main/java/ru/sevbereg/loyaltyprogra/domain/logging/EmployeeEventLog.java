@@ -5,13 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import ru.sevbereg.loyaltyprogra.domain.AbstractIdentifiableEntity;
 import ru.sevbereg.loyaltyprogra.domain.Employee;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -19,13 +19,11 @@ import java.util.UUID;
 @Setter
 @Accessors(chain = true)
 @Table(name = "t_employee_event_log")
+@EqualsAndHashCode(callSuper = true)
 public class EmployeeEventLog extends AbstractIdentifiableEntity {
 
     @Column(name = "c_rq_uid", nullable = false, unique = true)
     private UUID rqUid;
-
-    @Column(name = "c_create_date")
-    private Instant createDate;
 
     @Column(name = "c_event_type")
     private String eventType;

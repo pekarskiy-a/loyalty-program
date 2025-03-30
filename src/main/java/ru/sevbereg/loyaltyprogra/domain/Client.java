@@ -8,6 +8,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,6 +20,7 @@ import java.util.Set;
 @Setter
 @Accessors(chain = true)
 @Table(name = "t_client")
+@EqualsAndHashCode(callSuper = true)
 public class Client extends AbstractPerson {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -35,6 +37,6 @@ public class Client extends AbstractPerson {
     @Column(name = "c_client_category")
     private String clientCategory;
 
-    @Column(name = "c_comment")
+    @Column(name = "c_comment", length = 1000)
     private String comment;
 }

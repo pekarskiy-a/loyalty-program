@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 @Setter
 @Accessors(chain = true)
 @Table(name = "t_loyalty_tier")
+@EqualsAndHashCode(callSuper = true)
 public class LoyaltyTier extends AbstractMutableEntity {
 
     @ManyToOne
@@ -37,7 +39,7 @@ public class LoyaltyTier extends AbstractMutableEntity {
     @Column(name = "c_next_level_value")
     private BigDecimal nextLevelValue;
 
-    @Column(name = "c_benefit")
+    @Column(name = "c_benefit", length = 2000)
     private String benefit;
     
 }

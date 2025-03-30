@@ -3,6 +3,7 @@ package ru.sevbereg.loyaltyprogra.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -12,6 +13,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @Table(name = "t_employee_position")
+@EqualsAndHashCode(callSuper = true)
 public class EmployeePosition extends AbstractIdentifiableEntity {
 
     @Column(name = "t_position_name")

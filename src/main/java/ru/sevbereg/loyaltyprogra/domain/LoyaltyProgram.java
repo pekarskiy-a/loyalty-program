@@ -7,32 +7,26 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
 @Accessors(chain = true)
 @Table(name = "t_loyalty_program")
+@EqualsAndHashCode(callSuper = true)
 public class LoyaltyProgram extends AbstractMutableEntity {
 
-    /**
-     * Ключ идемпотентности
-     */
-    @Column(name = "c_external_id", nullable = false, unique = true)
-    private UUID externalId;
-
-    @Column(name = "c_lp_name")
+    @Column(name = "c_lp_name", unique = true, nullable = false)
     private String lpName;
 
-    @Column(name = "c_description")
+    @Column(name = "c_description", length = 2000)
     private String description;
 
     @OneToMany(cascade = CascadeType.ALL)

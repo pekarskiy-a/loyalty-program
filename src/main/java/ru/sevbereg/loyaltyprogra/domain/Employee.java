@@ -1,6 +1,5 @@
 package ru.sevbereg.loyaltyprogra.domain;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -8,11 +7,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.time.Instant;
 import java.util.Set;
 
 @Entity
@@ -20,6 +19,7 @@ import java.util.Set;
 @Setter
 @Accessors(chain = true)
 @Table(name = "t_employee")
+@EqualsAndHashCode(callSuper = true)
 public class Employee extends AbstractPerson {
 
     /**
@@ -33,7 +33,7 @@ public class Employee extends AbstractPerson {
     )
     private Set<EmployeePosition> positions;
 
-    @Column(name = "c_comment")
+    @Column(name = "c_comment", length = 1000)
     private String comment;
 
 }

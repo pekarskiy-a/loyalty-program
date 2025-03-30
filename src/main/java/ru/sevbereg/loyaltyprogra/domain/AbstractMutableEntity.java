@@ -2,7 +2,7 @@ package ru.sevbereg.loyaltyprogra.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Version;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,8 +10,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -30,20 +28,15 @@ public class AbstractMutableEntity extends AbstractIdentifiableEntity {
 //    @Column(name = "c_sbid")
 //    private String sbId;
 
-    @Column(name = "c_creat_date")
-    private LocalDateTime creatDate;
-
     @Column(name = "c_update_date")
-    private LocalDateTime updateDate;
+    private Instant updateDate;
 
     @Column(name = "c_is_active")
     private boolean isActive = true;
 
-    @PrePersist
+    @PreUpdate
     private void prePersist() {
-        if (Objects.isNull(updateDate)) {
-            updateDate = LocalDateTime.now();
-        }
+        updateDate = Instant.now();
     }
 
 }
