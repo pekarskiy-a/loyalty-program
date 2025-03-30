@@ -7,7 +7,6 @@ import ru.sevbereg.loyaltyprogra.repository.LoyaltyProgramRepository;
 import ru.sevbereg.loyaltyprogra.service.LoyaltyProgramService;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +22,11 @@ public class LoyaltyProgramServiceImpl implements LoyaltyProgramService {
     @Override
     public LoyaltyProgram findById(String id) {
         return repository.findById(id);
+    }
+
+    @Override
+    public LoyaltyProgram findByLpName(String lpName) {
+        return repository.findByLpName(lpName);
     }
 
     @Override
@@ -42,7 +46,7 @@ public class LoyaltyProgramServiceImpl implements LoyaltyProgramService {
     }
 
     @Override
-    public void delete(LoyaltyProgram entity) {
-        repository.delete(entity);
+    public void deleteById(Long id) {
+        repository.deleteById(id);
     }
 }

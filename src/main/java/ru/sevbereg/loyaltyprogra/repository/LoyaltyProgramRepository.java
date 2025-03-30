@@ -18,4 +18,9 @@ public interface LoyaltyProgramRepository extends JpaRepository<LoyaltyProgram, 
     )
     LoyaltyProgram findById(String id);
 
+    @Query(
+            value = "SELECT loyaltyProgram FROM LoyaltyProgram  loyaltyProgram LEFT JOIN FETCH loyaltyProgram.tiers WHERE loyaltyProgram.lpName = ?1"
+    )
+    LoyaltyProgram findByLpName(String lpName);
+
 }

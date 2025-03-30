@@ -10,12 +10,14 @@ public interface LoyaltyProgramService {
 
     LoyaltyProgram findById(String id);
 
+    LoyaltyProgram findByLpName(String lpName);
+
     LoyaltyProgram save(LoyaltyProgram entity);
 
     LoyaltyProgram update(LoyaltyProgram entity);
 
     LoyaltyProgram softDelete(LoyaltyProgram entity);
 
-    void delete(LoyaltyProgram entity);
+    void deleteById(Long id);
 
 }
