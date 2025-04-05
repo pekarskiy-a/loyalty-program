@@ -1,5 +1,6 @@
 package ru.sevbereg.loyaltyprogra.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -17,10 +18,11 @@ import java.math.BigDecimal;
 @Setter
 @Accessors(chain = true)
 @Table(name = "t_loyalty_tier")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "loyaltyProgram")
 public class LoyaltyTier extends AbstractMutableEntity {
 
-    @ManyToOne
+    @JsonIgnoreProperties("tiers")
+    @ManyToOne(targetEntity = LoyaltyProgram.class)
     @JoinColumn(name = "c_loyalty_program_id")
     private LoyaltyProgram loyaltyProgram;
 
@@ -41,5 +43,11 @@ public class LoyaltyTier extends AbstractMutableEntity {
 
     @Column(name = "c_benefit", length = 2000)
     private String benefit;
-    
+
+    /**
+     * Доступность бронирования без предоплаты
+     */
+    @Column(name = "c_is_available_booking")
+    private boolean isAvailableBooking;
+
 }

@@ -1,10 +1,9 @@
 package ru.sevbereg.loyaltyprogra.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
@@ -13,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -29,18 +29,24 @@ public class LoyaltyProgram extends AbstractMutableEntity {
     @Column(name = "c_description", length = 2000)
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "lt_loyalty_program_loyalty_tier",
-            joinColumns = @JoinColumn(name = "c_loyalty_program_id"),
-            inverseJoinColumns = @JoinColumn(name = "c_loyalty_tier_id")
-    )
-    private Set<LoyaltyTier> tiers;
+    @JsonIgnoreProperties("loyaltyProgram")
+    @OneToMany(mappedBy = "loyaltyProgram", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<LoyaltyTier> tiers = new HashSet<>();
 
     @Column(name = "c_start_date")
     private LocalDate startDate;
 
     @Column(name = "c_end_date")
     private LocalDate endDate;
+
+    public LoyaltyProgram addTiers(Set<LoyaltyTier> tiers) {
+        tiers.forEach(this::addTier);
+        return this;
+    }
+
+    public void addTier(LoyaltyTier tier) {
+        tiers.add(tier);
+        tier.setLoyaltyProgram(this);
+    }
 
 }

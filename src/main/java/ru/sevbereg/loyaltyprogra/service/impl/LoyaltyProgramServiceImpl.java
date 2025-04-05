@@ -31,18 +31,26 @@ public class LoyaltyProgramServiceImpl implements LoyaltyProgramService {
 
     @Override
     public LoyaltyProgram save(LoyaltyProgram entity) {
+        entity.addTiers(entity.getTiers());
         return repository.save(entity);
     }
 
     @Override
     public LoyaltyProgram update(LoyaltyProgram entity) {
+        entity.addTiers(entity.getTiers());
         return repository.save(entity);
     }
 
     @Override
     public LoyaltyProgram softDelete(LoyaltyProgram entity) {
         entity.setActive(false);
+        entity.getTiers().forEach(tier -> tier.setActive(false));
         return repository.save(entity);
+    }
+
+    @Override
+    public void delete(LoyaltyProgram entity) {
+        repository.delete(entity);
     }
 
     @Override

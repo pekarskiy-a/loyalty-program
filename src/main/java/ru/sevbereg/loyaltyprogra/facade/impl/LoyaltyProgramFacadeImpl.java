@@ -10,6 +10,7 @@ import ru.sevbereg.loyaltyprogra.domain.LoyaltyProgram;
 import ru.sevbereg.loyaltyprogra.facade.LoyaltyProgramFacade;
 import ru.sevbereg.loyaltyprogra.mapper.LoyaltyProgramMapper;
 import ru.sevbereg.loyaltyprogra.service.LoyaltyProgramService;
+import ru.sevbereg.loyaltyprogra.service.LoyaltyTierService;
 import ru.sevbereg.loyaltyprogra.util.JsonUtils;
 
 import java.util.Objects;
@@ -23,6 +24,8 @@ public class LoyaltyProgramFacadeImpl implements LoyaltyProgramFacade {
     private final LoyaltyProgramMapper lpMapper;
 
     private final LoyaltyProgramService lpService;
+
+    private final LoyaltyTierService tierService;
 
     @Override
     @Transactional
@@ -57,7 +60,11 @@ public class LoyaltyProgramFacadeImpl implements LoyaltyProgramFacade {
     @Override
     @Transactional
     public void deleteById(Long id) {
-        lpService.deleteById(id);
+        LoyaltyProgram loyaltyProgram = lpService.findById(id.toString());
+        if (Objects.isNull(loyaltyProgram)) {
+            return;
+        }
+        lpService.delete(loyaltyProgram);
     }
 
     private void nameExistCheck(String lpName, UUID rqUid) {

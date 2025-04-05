@@ -18,6 +18,8 @@ public interface LoyaltyProgramService {
 
     LoyaltyProgram softDelete(LoyaltyProgram entity);
 
+    void delete(LoyaltyProgram entity);
+
     void deleteById(Long id);
 
 }

@@ -31,8 +31,7 @@ public class LoyaltyProgramController {
         try {
             loyaltyProgram = facade.create(request);
         } catch (ValidationException ex) {
-            var message = String.format("Ошибка валидации, программа лояльности с именем: %s уже существует", request.getLpName());
-            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -67,8 +66,8 @@ public class LoyaltyProgramController {
         } catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        var message = String.format("Продукт с id: %s удалён", id);
-        return new ResponseEntity<>(message, HttpStatus.OK);
+        var successMessage = String.format("Продукт с id: %s удалён", id);
+        return new ResponseEntity<>(successMessage, HttpStatus.OK);
     }
 
 }
