@@ -1,5 +1,6 @@
 package ru.sevbereg.loyaltyprogra.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -17,18 +18,19 @@ import java.math.BigDecimal;
 @Setter
 @Accessors(chain = true)
 @Table(name = "t_card")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "client")
 public class Card extends AbstractMutableEntity {
 
     @ManyToOne
     @JoinColumn(name = "c_tier_id")
     private LoyaltyTier loyaltyTier;
 
-    @ManyToOne
+    @JsonIgnoreProperties("card")
+    @ManyToOne(targetEntity = Client.class)
     @JoinColumn(name = "c_client_id")
     private Client client;
 
-    @Column(name = "c_card_number")
+    @Column(name = "c_card_number", nullable = false, unique = true)
     private Long cardNumber;
 
     /**
@@ -44,6 +46,6 @@ public class Card extends AbstractMutableEntity {
     private int sumCancelledCheckIn;
 
     @Column(name = "c_bonus_balance")
-    private BigDecimal bonusBalance;
+    private BigDecimal bonusBalance = BigDecimal.ZERO;
 
 }

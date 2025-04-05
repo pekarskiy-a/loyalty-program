@@ -1,6 +1,8 @@
 package ru.sevbereg.loyaltyprogra.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.Email;
 import lombok.EqualsAndHashCode;
@@ -8,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.time.Instant;
 import java.time.LocalDate;
 
 @Getter
@@ -29,7 +30,8 @@ public class AbstractPerson extends AbstractMutableEntity {
     private String email;
 
     @Column(name = "c_sex")
-    private String sex;
+    @Enumerated(EnumType.STRING)
+    private Sex sex;
 
     @Column(name = "c_surname")
     private String surname;
