@@ -52,7 +52,6 @@ public class ClientFacadeImpl implements ClientFacade {
                 .orElseThrow(() -> new IllegalArgumentException("Отсутствует уровень программы лояльности c id" + cardCreateRq.getLoyaltyTierId()));
 
         Client client = clientMapper.mapToClient(request);
-        client.setPhoneNumber(formattedPhoneNumber);
 
         Card card = client.getCards().stream()
                 .findFirst()
@@ -61,7 +60,7 @@ public class ClientFacadeImpl implements ClientFacade {
         card.setAvailableBooking(loyaltyTier.isAvailableBooking());
 
         if (Objects.isNull(card.getCardNumber())) {
-            card.setCardNumber(this.getCardNumber(formattedPhoneNumber));
+            card.setCardNumber(this.generateCardNumber(formattedPhoneNumber));
         }
 
         return clientService.create(client);
@@ -95,7 +94,7 @@ public class ClientFacadeImpl implements ClientFacade {
         clientService.delete(client);
     }
 
-    private long getCardNumber(String phoneNumber) {
+    private long generateCardNumber(String phoneNumber) {
         CRC32 crc = new CRC32();
         crc.update(phoneNumber.getBytes());
         return crc.getValue();

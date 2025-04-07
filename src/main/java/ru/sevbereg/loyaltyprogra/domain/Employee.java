@@ -1,11 +1,12 @@
 package ru.sevbereg.loyaltyprogra.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,9 +26,10 @@ public class Employee extends AbstractPerson {
     /**
      * Должность
      */
-    @OneToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("employee")
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "lt_employee_positions",
+            name = "lt_employee_position",
             joinColumns = @JoinColumn(name = "c_employee_id"),
             inverseJoinColumns = @JoinColumn(name = "c_position_id")
     )
