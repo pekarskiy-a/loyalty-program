@@ -25,7 +25,7 @@ public class Card extends AbstractMutableEntity {
     @JoinColumn(name = "c_tier_id")
     private LoyaltyTier loyaltyTier;
 
-    @JsonIgnoreProperties("card")
+    @JsonIgnoreProperties("cards")
     @ManyToOne(targetEntity = Client.class)
     @JoinColumn(name = "c_client_id")
     private Client client;
