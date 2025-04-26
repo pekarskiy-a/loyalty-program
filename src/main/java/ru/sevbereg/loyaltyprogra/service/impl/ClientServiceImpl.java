@@ -35,6 +35,11 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public Client findByTgUserId(Long tgUserId) {
+        return repository.findByBotState_TgUserId(tgUserId);
+    }
+
+    @Override
     public void delete(Client entity) {
         repository.delete(entity);
     }

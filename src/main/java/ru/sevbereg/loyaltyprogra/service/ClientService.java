@@ -12,6 +12,8 @@ public interface ClientService {
 
     Client findByPhoneNumber(String phoneNumber);
 
+    Client findByTgUserId(Long tgUserId);
+
     void delete(Client entity);
 
     void deleteById(Long id);
