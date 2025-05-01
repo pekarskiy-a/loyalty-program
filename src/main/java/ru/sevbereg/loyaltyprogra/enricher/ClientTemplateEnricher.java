@@ -2,8 +2,10 @@ package ru.sevbereg.loyaltyprogra.enricher;
 
 import org.springframework.stereotype.Component;
 import ru.sevbereg.loyaltyprogra.domain.Client;
+import ru.sevbereg.loyaltyprogra.domain.Sex;
 import ru.sevbereg.loyaltyprogra.tgbotapi.api.UpdateClientTemplate;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 @Component
@@ -13,7 +15,10 @@ public class ClientTemplateEnricher {
         setIfPresent(target.getPhoneNumber(), source::setPhoneNumber);
         setIfPresent(target.getTelegram(), source::setTelegram);
         setIfPresent(target.getEmail(), source::setEmail);
-        setIfPresent(target.getSex(), source::setSex);
+        Sex sex = Optional.ofNullable(target.getSex())
+                .map(Sex::valueOf)
+                .orElse(null);
+        setIfPresent(sex, source::setSex);
         setIfPresent(target.getSurname(), source::setSurname);
         setIfPresent(target.getName(), source::setSurname);
         setIfPresent(target.getName(), source::setName);

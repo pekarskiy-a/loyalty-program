@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.sevbereg.loyaltyprogra.domain.Sex;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.BotState;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.ClientBotState;
 import ru.sevbereg.loyaltyprogra.facade.tgbot.ClientTgBotFacade;
@@ -22,6 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.ASK_PHONE_NUMBER;
+import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.ENTER_PHONE_NUMBER;
 import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.SHOW_HELP_MENU;
 
 @Slf4j
@@ -50,9 +50,9 @@ public class ClientTgBotHandler {
         if (Objects.isNull(message)) {
             return null;
         }
-        if (!message.hasText()) {
+        if (!message.hasText() && !message.hasContact()) {
             log.info("Отсутствует сообщение от userID:{}, chatId: {}, с текстом: {}", message.getFrom().getUserName(), message.getChatId(), message.getText());
-            return messageService.getReplyMessage(message.getChatId(), "Вы отправили пустое сообщение");
+            return messageService.getReplyMessageFromSource(message.getChatId(), "error.empty.message");
         }
 
         log.info("Новое сообщение от User:{}, chatId: {}, с текстом: {}", message.getFrom().getId(), message.getChatId(), message.getText());
@@ -64,6 +64,11 @@ public class ClientTgBotHandler {
         String inputMessage = message.getText();
         Long userId = message.getFrom().getId();
 
+        if (Objects.isNull(inputMessage) && message.hasContact()) {
+            botStateService.findByTgUserIdAndSaveState(userId, ENTER_PHONE_NUMBER);
+            return botStateContext.processInputMessage(ENTER_PHONE_NUMBER, message);
+        }
+
         BotState botState = switch (inputMessage) {
             case "/start" -> ASK_PHONE_NUMBER;
 //            case "Зарегистрироваться в программе лояльности" -> FILLING_FORM;
@@ -74,7 +79,6 @@ public class ClientTgBotHandler {
         };
 
         botStateService.findByTgUserIdAndSaveState(userId, botState);
-
         return botStateContext.processInputMessage(botState, message);
     }
 
@@ -99,7 +103,7 @@ public class ClientTgBotHandler {
         final Long userId = buttonQuery.getFrom().getId();
 
         try {
-            clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(userId).sex(Sex.valueOf(buttonQuery.getData())).build());
+            clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(userId).sex(buttonQuery.getData()).build());
             botStateService.findByTgUserIdAndSaveState(userId, BotState.ASK_EMAIL);
 
             return messageService.getReplyMessageFromSource(chatId, "replay.form.email");

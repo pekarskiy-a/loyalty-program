@@ -31,7 +31,7 @@ public class EnterPhoneNumberHandler extends AbstractInputMessageHandler {
         Long tgUserId = message.getFrom().getId();
         Long chatId = message.getChatId();
 
-        String clientPhoneNumber = PhoneFormatterUtils.normalizeRuPhone(message.getText());
+        String clientPhoneNumber = PhoneFormatterUtils.normalizeRuPhone(message.getContact().getPhoneNumber());
 
         Client client = clientFacade.findByPhoneNumber(clientPhoneNumber);
 

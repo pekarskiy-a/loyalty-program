@@ -79,7 +79,7 @@ public class FillingFormHandler extends AbstractInputMessageHandler {
             }
             case ASK_SEX -> {
                 try {
-                    clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).sex(Sex.valueOf(userAnswer)).build());
+                    clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).sex(userAnswer).build());
                     botStateService.findByTgUserIdAndSaveState(tgUserId, BotState.ASK_EMAIL);
                     return messageService.getReplyMessageFromSource(chatId, "replay.form.email");
                 } catch (Exception ex) {
