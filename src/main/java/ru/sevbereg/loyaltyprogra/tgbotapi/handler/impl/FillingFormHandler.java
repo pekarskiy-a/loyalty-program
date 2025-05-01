@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import ru.sevbereg.loyaltyprogra.domain.Sex;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.BotState;
 import ru.sevbereg.loyaltyprogra.facade.tgbot.ClientTgBotFacade;
@@ -13,6 +15,8 @@ import ru.sevbereg.loyaltyprogra.tgbotapi.api.UpdateClientTemplate;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -66,7 +70,9 @@ public class FillingFormHandler extends AbstractInputMessageHandler {
                     var birthdate = LocalDate.parse(userAnswer);
                     clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).birthdate(birthdate).build());
                     botStateService.findByTgUserIdAndSaveState(tgUserId, BotState.ASK_SEX);
-                    return messageService.getReplyMessageFromSource(chatId, "replay.form.sex");
+                    SendMessage replyMessage = messageService.getReplyMessageFromSource(chatId, "replay.form.sex");
+                    replyMessage.setReplyMarkup(getSexMessageButtons());
+                    return replyMessage;
                 } catch (DateTimeParseException e) {
                     return messageService.getReplyMessageFromSource(chatId, "replay.form.birthdate.error");
                 }
@@ -88,5 +94,28 @@ public class FillingFormHandler extends AbstractInputMessageHandler {
         }
         String errorMessage = String.format("Некорректный статус заполнения формы для пользователя с tgUserId [%s]!", tgUserId);
         return messageService.getReplyMessage(chatId, errorMessage);
+    }
+
+    /**
+     * Метод создания кнопок пола
+     *
+     * @return кнопка
+     */
+    private InlineKeyboardMarkup getSexMessageButtons() {
+        final var menButton = InlineKeyboardButton.builder()
+                .text("Мужчина")
+                .callbackData(Sex.M.name())
+                .build();
+
+        final var womenButton = InlineKeyboardButton.builder()
+                .text("Женщина")
+                .callbackData(Sex.W.name())
+                .build();
+
+        List<InlineKeyboardButton> keyboardButtonsRowSex = new ArrayList<>();
+        keyboardButtonsRowSex.add(menButton);
+        keyboardButtonsRowSex.add(womenButton);
+
+        return InlineKeyboardMarkup.builder().keyboardRow(keyboardButtonsRowSex).build();
     }
 }
