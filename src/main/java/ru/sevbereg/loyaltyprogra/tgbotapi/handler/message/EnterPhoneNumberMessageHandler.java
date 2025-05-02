@@ -1,4 +1,4 @@
-package ru.sevbereg.loyaltyprogra.tgbotapi.handler.impl;
+package ru.sevbereg.loyaltyprogra.tgbotapi.handler.message;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,13 +15,13 @@ import java.util.Objects;
 
 @Slf4j
 @Component
-public class EnterPhoneNumberHandler extends AbstractInputMessageHandler {
+public class EnterPhoneNumberMessageHandler extends AbstractInputMessageHandler {
 
     private final ClientTgBotFacade clientFacade;
 
-    public EnterPhoneNumberHandler(UserBotStateService botStateService,
-                                   ReplyMessageService messageService,
-                                   ClientTgBotFacade clientFacade) {
+    public EnterPhoneNumberMessageHandler(UserBotStateService botStateService,
+                                          ReplyMessageService messageService,
+                                          ClientTgBotFacade clientFacade) {
         super(botStateService, messageService);
         this.clientFacade = clientFacade;
     }
@@ -49,8 +49,6 @@ public class EnterPhoneNumberHandler extends AbstractInputMessageHandler {
     }
 
     private SendMessage createNewClient(String clientPhoneNumber, Long tgUserId, Long chatId) {
-//        ClientBotState currentClientBotState = botStateService.getUserBotStateByTgId(tgUserId);
-
         clientFacade.createTemplate(clientPhoneNumber, tgUserId);
 
         botStateService.findByTgUserIdAndSaveState(tgUserId, BotState.ASK_SURNAME);

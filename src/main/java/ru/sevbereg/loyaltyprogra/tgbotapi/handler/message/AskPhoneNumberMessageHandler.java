@@ -1,4 +1,4 @@
-package ru.sevbereg.loyaltyprogra.tgbotapi.handler.impl;
+package ru.sevbereg.loyaltyprogra.tgbotapi.handler.message;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -16,11 +16,11 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class AskPhoneNumberHandler extends AbstractInputMessageHandler {
+public class AskPhoneNumberMessageHandler extends AbstractInputMessageHandler {
 
     private final LocaleMessageService localeMessageService;
 
-    public AskPhoneNumberHandler(UserBotStateService botStateService, ReplyMessageService messageService, LocaleMessageService localeMessageService) {
+    public AskPhoneNumberMessageHandler(UserBotStateService botStateService, ReplyMessageService messageService, LocaleMessageService localeMessageService) {
         super(botStateService, messageService);
         this.localeMessageService = localeMessageService;
     }

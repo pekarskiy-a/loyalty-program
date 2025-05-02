@@ -1,4 +1,4 @@
-package ru.sevbereg.loyaltyprogra.tgbotapi.handler.impl;
+package ru.sevbereg.loyaltyprogra.tgbotapi.handler.message;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,9 +10,9 @@ import ru.sevbereg.loyaltyprogra.service.tgbot.UserBotStateService;
 
 @Slf4j
 @Component
-public class FormFilledHandler extends AbstractInputMessageHandler {
+public class FormFilledMessageHandler extends AbstractInputMessageHandler {
 
-    public FormFilledHandler(UserBotStateService botStateService, ReplyMessageService messageService) {
+    public FormFilledMessageHandler(UserBotStateService botStateService, ReplyMessageService messageService) {
         super(botStateService, messageService);
     }
 

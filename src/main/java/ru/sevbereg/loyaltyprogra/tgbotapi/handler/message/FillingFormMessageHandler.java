@@ -1,4 +1,4 @@
-package ru.sevbereg.loyaltyprogra.tgbotapi.handler.impl;
+package ru.sevbereg.loyaltyprogra.tgbotapi.handler.message;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,14 +20,14 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class FillingFormHandler extends AbstractInputMessageHandler {
+public class FillingFormMessageHandler extends AbstractInputMessageHandler {
 
     //todo подумать над заполнение формы в мапе
     private final ClientTgBotFacade clientFacade;
 
-    public FillingFormHandler(UserBotStateService botStateService,
-                              ReplyMessageService messageService,
-                              ClientTgBotFacade clientFacade) {
+    public FillingFormMessageHandler(UserBotStateService botStateService,
+                                     ReplyMessageService messageService,
+                                     ClientTgBotFacade clientFacade) {
         super(botStateService, messageService);
         this.clientFacade = clientFacade;
     }
@@ -77,7 +77,7 @@ public class FillingFormHandler extends AbstractInputMessageHandler {
                     return messageService.getReplyMessageFromSource(chatId, "replay.form.birthdate.error");
                 }
             }
-            case ASK_SEX -> {
+            case ASK_SEX -> { //todo не используется, обрабатывается кнопкой
                 try {
                     clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).sex(userAnswer).build());
                     botStateService.findByTgUserIdAndSaveState(tgUserId, BotState.ASK_EMAIL);

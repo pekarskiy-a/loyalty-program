@@ -11,11 +11,9 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.BotState;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.ClientBotState;
-import ru.sevbereg.loyaltyprogra.facade.tgbot.ClientTgBotFacade;
 import ru.sevbereg.loyaltyprogra.service.tgbot.ReplyMessageService;
 import ru.sevbereg.loyaltyprogra.service.tgbot.UserBotStateService;
 import ru.sevbereg.loyaltyprogra.tgbotapi.BotStateContext;
-import ru.sevbereg.loyaltyprogra.tgbotapi.api.UpdateClientTemplate;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -30,26 +28,22 @@ import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.SHOW_HELP_MENU;
 public class ClientTgBotHandler {
 
     private final BotStateContext botStateContext;
-
     private final UserBotStateService botStateService;
-
     private final ReplyMessageService messageService;
 
-    private final ClientTgBotFacade clientFacade;
-
-    public BotApiMethod<?> handleUpdate(Update request) {
-        if (request.hasCallbackQuery()) {
-            final CallbackQuery callbackQuery = request.getCallbackQuery();
+    public BotApiMethod<?> handleUpdate(Update update) {
+        if (update.hasCallbackQuery()) {
+            CallbackQuery callbackQuery = update.getCallbackQuery();
             log.info("Новый callbackQuery от пользователя userID:{}, с данными: {}",
-                    request.getCallbackQuery().getFrom().getId(), request.getCallbackQuery().getData());
-            return processCallBackQuery(callbackQuery);
+                    callbackQuery.getFrom().getId(), callbackQuery.getData());
+            return processInputCallbackQuery(callbackQuery);
         }
 
-
-        Message message = request.getMessage();
+        final Message message = update.getMessage();
         if (Objects.isNull(message)) {
             return null;
         }
+        
         if (!message.hasText() && !message.hasContact()) {
             log.info("Отсутствует сообщение от userID:{}, chatId: {}, с текстом: {}", message.getFrom().getUserName(), message.getChatId(), message.getText());
             return messageService.getReplyMessageFromSource(message.getChatId(), "error.empty.message");
@@ -60,6 +54,24 @@ public class ClientTgBotHandler {
         return handleInputMessage(message);
     }
 
+    /**
+     * Метод обработки кнопок
+     *
+     * @param callbackQuery
+     * @return сообщение или кнопки
+     */
+    private BotApiMethod<?> processInputCallbackQuery(CallbackQuery callbackQuery) {
+        Long userId = callbackQuery.getFrom().getId();
+        BotState botState = botStateService.getUserBotStateByTgId(userId).getBotState();
+        return botStateContext.processInputCallbackQuery(botState, callbackQuery);
+    }
+
+    /**
+     * Метод обработки сообщений
+     *
+     * @param message
+     * @return
+     */
     private SendMessage handleInputMessage(Message message) {
         String inputMessage = message.getText();
         Long userId = message.getFrom().getId();
@@ -80,36 +92,6 @@ public class ClientTgBotHandler {
 
         botStateService.findByTgUserIdAndSaveState(userId, botState);
         return botStateContext.processInputMessage(botState, message);
-    }
-
-    /**
-     * Метод обработки кнопок. В текущей реализации существует только обработка кнопок пола, поэтому доп условий нет
-     *
-     * @param buttonQuery
-     * @return
-     */
-    private BotApiMethod<?> processCallBackQuery(CallbackQuery buttonQuery) {
-        return processSexBottom(buttonQuery);
-    }
-
-    /**
-     * Метод обработки кнопки пола
-     *
-     * @param buttonQuery
-     * @return
-     */
-    private BotApiMethod<?> processSexBottom(CallbackQuery buttonQuery) {
-        final Long chatId = buttonQuery.getMessage().getChatId();
-        final Long userId = buttonQuery.getFrom().getId();
-
-        try {
-            clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(userId).sex(buttonQuery.getData()).build());
-            botStateService.findByTgUserIdAndSaveState(userId, BotState.ASK_EMAIL);
-
-            return messageService.getReplyMessageFromSource(chatId, "replay.form.email");
-        } catch (Exception ex) {
-            return messageService.getReplyMessageFromSource(chatId, "replay.form.sex.error");
-        }
     }
 
     /**
