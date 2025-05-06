@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import ru.sevbereg.loyaltyprogra.domain.Sex;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.BotState;
 import ru.sevbereg.loyaltyprogra.facade.tgbot.ClientTgBotFacade;
+import ru.sevbereg.loyaltyprogra.service.tgbot.MainMenuService;
 import ru.sevbereg.loyaltyprogra.service.tgbot.ReplyMessageService;
 import ru.sevbereg.loyaltyprogra.service.tgbot.UserBotStateService;
 import ru.sevbereg.loyaltyprogra.tgbotapi.api.UpdateClientTemplate;
@@ -25,11 +26,14 @@ public class FillingFormMessageHandler extends AbstractInputMessageHandler {
     //todo подумать над заполнение формы в мапе
     private final ClientTgBotFacade clientFacade;
 
+    private final MainMenuService mainMenuService;
+
     public FillingFormMessageHandler(UserBotStateService botStateService,
                                      ReplyMessageService messageService,
-                                     ClientTgBotFacade clientFacade) {
+                                     ClientTgBotFacade clientFacade, MainMenuService mainMenuService) {
         super(botStateService, messageService);
         this.clientFacade = clientFacade;
+        this.mainMenuService = mainMenuService;
     }
 
     @Override
@@ -89,7 +93,7 @@ public class FillingFormMessageHandler extends AbstractInputMessageHandler {
             case ASK_EMAIL -> {
                 clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).email(userAnswer).build());
                 botStateService.findByTgUserIdAndSaveState(tgUserId, BotState.FORM_FILLED);
-                return messageService.getReplyMessageFromSource(chatId, "reply.clientCreated");
+                return mainMenuService.getMainMenuMessage(chatId, "reply.clientCreated");
             }
         }
         String errorMessage = String.format("Некорректный статус заполнения формы для пользователя с tgUserId [%s]!", tgUserId);

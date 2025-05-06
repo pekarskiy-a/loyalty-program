@@ -20,7 +20,6 @@ public class ClientTemplateEnricher {
                 .orElse(null);
         setIfPresent(sex, source::setSex);
         setIfPresent(target.getSurname(), source::setSurname);
-        setIfPresent(target.getName(), source::setSurname);
         setIfPresent(target.getName(), source::setName);
         setIfPresent(target.getPatronymic(), source::setPatronymic);
         setIfPresent(target.getBirthdate(), source::setBirthdate);

@@ -2,6 +2,7 @@ package ru.sevbereg.loyaltyprogra.tgbotapi.handler.query;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.BotState;
@@ -14,6 +15,7 @@ import ru.sevbereg.loyaltyprogra.tgbotapi.handler.InputCallbackQueryHandler;
 import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.ASK_SEX;
 
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class FillingSexQueryHandler implements InputCallbackQueryHandler {
 

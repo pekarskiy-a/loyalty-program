@@ -40,7 +40,7 @@ public class Card extends AbstractMutableEntity {
     private boolean isAvailableBooking;
 
     /**
-     * Кол-во отмененных или перенесенных заездов
+     * Кол-во отмененных или перенесенных заездов подряд
      */
     @Column(name = "c_sum_cancelled_check_in")
     private int sumCancelledCheckIn;

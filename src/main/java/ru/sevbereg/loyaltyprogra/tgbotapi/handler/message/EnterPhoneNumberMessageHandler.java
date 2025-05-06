@@ -4,9 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import ru.sevbereg.loyaltyprogra.domain.Client;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.BotState;
 import ru.sevbereg.loyaltyprogra.facade.tgbot.ClientTgBotFacade;
+import ru.sevbereg.loyaltyprogra.service.tgbot.MainMenuService;
 import ru.sevbereg.loyaltyprogra.service.tgbot.ReplyMessageService;
 import ru.sevbereg.loyaltyprogra.service.tgbot.UserBotStateService;
 import ru.sevbereg.loyaltyprogra.util.PhoneFormatterUtils;
@@ -18,12 +20,14 @@ import java.util.Objects;
 public class EnterPhoneNumberMessageHandler extends AbstractInputMessageHandler {
 
     private final ClientTgBotFacade clientFacade;
+    private final MainMenuService mainMenuService;
 
     public EnterPhoneNumberMessageHandler(UserBotStateService botStateService,
                                           ReplyMessageService messageService,
-                                          ClientTgBotFacade clientFacade) {
+                                          ClientTgBotFacade clientFacade, MainMenuService mainMenuService) {
         super(botStateService, messageService);
         this.clientFacade = clientFacade;
+        this.mainMenuService = mainMenuService;
     }
 
     @Override
@@ -40,7 +44,7 @@ public class EnterPhoneNumberMessageHandler extends AbstractInputMessageHandler 
         }
 
         botStateService.findByTgUserIdAndSaveState(tgUserId, BotState.CARD_FOUND);
-        return messageService.getReplyMessageFromSource(chatId, "reply.clientAlreadyCreated");
+        return mainMenuService.getMainMenuMessage(chatId, "reply.clientAlreadyCreated");
     }
 
     @Override
@@ -53,6 +57,13 @@ public class EnterPhoneNumberMessageHandler extends AbstractInputMessageHandler 
 
         botStateService.findByTgUserIdAndSaveState(tgUserId, BotState.ASK_SURNAME);
 
-        return messageService.getReplyMessageFromSource(chatId, "replay.form.surname");
+        ReplyKeyboardRemove removeKeyboard = ReplyKeyboardRemove.builder()
+                .removeKeyboard(true)
+                .selective(true)
+                .build();
+
+        SendMessage replyMessage = messageService.getReplyMessageFromSource(chatId, "replay.form.surname");
+        replyMessage.setReplyMarkup(removeKeyboard);
+        return replyMessage;
     }
 }

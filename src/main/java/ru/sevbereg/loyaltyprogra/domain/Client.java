@@ -39,6 +39,10 @@ public class Client extends AbstractPerson {
     @Column(name = "c_comment", length = 1000)
     private String comment;
 
+    @OneToOne
+    @JoinColumn(name = "c_tg_user_id", referencedColumnName = "c_tg_user_id")
+    private ClientBotState botState;
+
     public void addCard(Card card) {
         cards.add(card);
         card.setClient(this);
@@ -48,9 +52,4 @@ public class Client extends AbstractPerson {
         cards.forEach(this::addCard);
         return this;
     }
-
-    @OneToOne
-    @JoinColumn(name = "c_tg_user_id", referencedColumnName = "c_tg_user_id")
-    private ClientBotState botState;
-
 }

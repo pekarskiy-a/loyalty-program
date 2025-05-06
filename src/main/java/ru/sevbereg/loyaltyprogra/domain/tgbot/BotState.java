@@ -5,14 +5,16 @@ package ru.sevbereg.loyaltyprogra.domain.tgbot;
  */
 public enum BotState {
 
-    //todo добавить состояния (для начала запросы по анкете)
     ASK_PHONE_NUMBER,
     ENTER_PHONE_NUMBER,
     FILLING_FORM,
+
     FORM_FILLED,
     CARD_FOUND,
-    SHOW_HELP_MENU,
+    SHOW_MAIN_MENU, //3-е кнопки (краткая информация по карте, информация о программе лояльности)
 
+    ASK_CARD_INFO,
+    ASK_LP_INFO,
     //Стадии заполнения формы
     ASK_SURNAME,
     ASK_NAME,

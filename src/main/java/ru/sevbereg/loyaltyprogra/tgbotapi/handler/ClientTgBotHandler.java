@@ -18,9 +18,10 @@ import ru.sevbereg.loyaltyprogra.tgbotapi.BotStateContext;
 import java.util.Objects;
 import java.util.Optional;
 
+import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.ASK_CARD_INFO;
+import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.ASK_LP_INFO;
 import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.ASK_PHONE_NUMBER;
 import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.ENTER_PHONE_NUMBER;
-import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.SHOW_HELP_MENU;
 
 @Slf4j
 @Service
@@ -29,7 +30,7 @@ public class ClientTgBotHandler {
 
     private final BotStateContext botStateContext;
     private final UserBotStateService botStateService;
-    private final ReplyMessageService messageService;
+    private final ReplyMessageService replayMessageService;
 
     public BotApiMethod<?> handleUpdate(Update update) {
         if (update.hasCallbackQuery()) {
@@ -46,7 +47,7 @@ public class ClientTgBotHandler {
         
         if (!message.hasText() && !message.hasContact()) {
             log.info("Отсутствует сообщение от userID:{}, chatId: {}, с текстом: {}", message.getFrom().getUserName(), message.getChatId(), message.getText());
-            return messageService.getReplyMessageFromSource(message.getChatId(), "error.empty.message");
+            return replayMessageService.getReplyMessageFromSource(message.getChatId(), "error.empty.message");
         }
 
         log.info("Новое сообщение от User:{}, chatId: {}, с текстом: {}", message.getFrom().getId(), message.getChatId(), message.getText());
@@ -62,8 +63,14 @@ public class ClientTgBotHandler {
      */
     private BotApiMethod<?> processInputCallbackQuery(CallbackQuery callbackQuery) {
         Long userId = callbackQuery.getFrom().getId();
-        BotState botState = botStateService.getUserBotStateByTgId(userId).getBotState();
-        return botStateContext.processInputCallbackQuery(botState, callbackQuery);
+        Long chatId = callbackQuery.getMessage().getChatId();
+
+        try {
+            BotState botState = botStateService.getUserBotStateByTgId(userId).getBotState();
+            return botStateContext.processInputCallbackQuery(botState, callbackQuery);
+        } catch (Exception ex) {
+            return replayMessageService.getReplyMessageFromSource(chatId, "error.unknown");
+        }
     }
 
     /**
@@ -75,27 +82,33 @@ public class ClientTgBotHandler {
     private SendMessage handleInputMessage(Message message) {
         String inputMessage = message.getText();
         Long userId = message.getFrom().getId();
+        Long chatId = message.getChatId();
 
-        if (Objects.isNull(inputMessage) && message.hasContact()) {
-            botStateService.findByTgUserIdAndSaveState(userId, ENTER_PHONE_NUMBER);
-            return botStateContext.processInputMessage(ENTER_PHONE_NUMBER, message);
+        try {
+            if (Objects.isNull(inputMessage) && message.hasContact()) {
+                botStateService.findByTgUserIdAndSaveState(userId, ENTER_PHONE_NUMBER);
+                return botStateContext.processInputMessage(ENTER_PHONE_NUMBER, message);
+            }
+
+            BotState botState = switch (inputMessage) {
+                case "/start" -> ASK_PHONE_NUMBER;
+                case "Информация о карте" -> ASK_CARD_INFO;
+                case "Информация о программе лояльности" -> ASK_LP_INFO;
+                default -> Optional.ofNullable(botStateService.getUserBotStateByTgId(userId)) //todo добавить кейс с информацией, что бот не умеет работать с другим текстом
+                        .map(ClientBotState::getBotState)
+                        .orElse(ASK_PHONE_NUMBER);
+            };
+
+            botStateService.findByTgUserIdAndSaveState(userId, botState);
+            return botStateContext.processInputMessage(botState, message);
+        } catch (Exception ex) {
+            return replayMessageService.getReplyMessageFromSource(chatId, "error.unknown");
         }
 
-        BotState botState = switch (inputMessage) {
-            case "/start" -> ASK_PHONE_NUMBER;
-//            case "Зарегистрироваться в программе лояльности" -> FILLING_FORM;
-            case "Помощь" -> SHOW_HELP_MENU;
-            default -> Optional.ofNullable(botStateService.getUserBotStateByTgId(userId))
-                    .map(ClientBotState::getBotState)
-                    .orElse(ASK_PHONE_NUMBER);
-        };
-
-        botStateService.findByTgUserIdAndSaveState(userId, botState);
-        return botStateContext.processInputMessage(botState, message);
     }
 
     /**
-     * Метод создания всплывающего уведомления
+     * Метод создания всплывающего уведомления (выводится вместо сообщения тк является наследником BotApiMethod)
      *
      * @param text
      * @param alert

@@ -26,7 +26,7 @@ public class BotStateContext {
     }
 
     public SendMessage processInputMessage(BotState currentState, Message message) {
-        InputMessageHandler currentMessageHandler = findMesssageHandler(currentState);
+        InputMessageHandler currentMessageHandler = findMessageHandler(currentState);
         return currentMessageHandler.handle(message);
     }
 
@@ -35,7 +35,7 @@ public class BotStateContext {
         return currentCallbackQueryHandler.handle(buttonQuery);
     }
 
-    private InputMessageHandler findMesssageHandler(BotState currentState) {
+    private InputMessageHandler findMessageHandler(BotState currentState) {
         if (isFillingProcessState(currentState)) {
             return messageHandlers.get(BotState.FILLING_FORM);
         }
@@ -44,9 +44,22 @@ public class BotStateContext {
 
     private boolean isFillingProcessState(BotState currentState) {
         return switch (currentState) {
-            case ASK_SURNAME, ASK_NAME, ASK_PATRONYMIC, ASK_BIRTHDATE, ASK_SEX, ASK_EMAIL, FILLING_FORM -> true;
+            case ASK_SURNAME,
+                    ASK_NAME,
+                    ASK_PATRONYMIC,
+                    ASK_BIRTHDATE,
+                    ASK_SEX,
+                    ASK_EMAIL,
+                    FILLING_FORM -> true;
             default -> false;
         };
     }
+
+//    private boolean isCardCreatedStatus(BotState currentState) {
+//        return switch (currentState) {
+//            case FORM_FILLED, CARD_FOUND, SHOW_MAIN_MENU -> true;
+//            default -> false;
+//        };
+//    }
 
 }

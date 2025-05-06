@@ -32,7 +32,7 @@ public class ClientBotState extends AbstractIdentifiableEntity {
     @Column(name = "c_tg_user_id", nullable = false, unique = true)
     private Long tgUserId;
 
-    @Column(name = "c_bot_state", nullable = false)
+    @Column(name = "c_bot_state", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private BotState botState;
 

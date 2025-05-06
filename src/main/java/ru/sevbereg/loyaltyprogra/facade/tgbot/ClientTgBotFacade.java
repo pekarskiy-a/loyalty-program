@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.zip.CRC32;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ClientTgBotFacade {
 
@@ -37,7 +38,6 @@ public class ClientTgBotFacade {
     @Value("${default.loyalty.tier.id}")
     private Long defaultLoyaltyTierId;
 
-    @Transactional
     public Client createTemplate(String phoneNumber, Long tgUserId) {
         String formattedPhoneNumber = PhoneFormatterUtils.normalizeRuPhone(phoneNumber);
         LoyaltyTier loyaltyTier = loyaltyTierService.findById(defaultLoyaltyTierId);
@@ -63,7 +63,7 @@ public class ClientTgBotFacade {
         if (Objects.isNull(clientDto.getTgUserId())) {
             throw new IllegalArgumentException("Не заполнен TgUserId");
         }
-        Client clientTemplate = clientService.findByTgUserId(clientDto.getTgUserId());
+        Client clientTemplate = clientService.findByTgUserId(clientDto.getTgUserId()); //todo если приходит null, то возвращается первый попавшийся, проверить почему так
         if (Objects.isNull(clientTemplate)) {
             throw new NotFoundException("Клиент не найден");
         }
