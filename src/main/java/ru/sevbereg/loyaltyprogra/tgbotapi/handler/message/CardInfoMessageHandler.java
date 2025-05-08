@@ -38,6 +38,7 @@ public class CardInfoMessageHandler extends AbstractInputMessageHandler {
         } else {
             availableBooking = "Нет";
         }
+        stringBuilder.append(String.format("Размер скидки: %s%%\n", card.getLoyaltyTier().getDiscountPercent()));
         stringBuilder.append(String.format("Доступность бронирования без предоплаты: %s\n", availableBooking));
         stringBuilder.append(String.format("Кол-во отмененных или перенесенных заездов подряд: %s\n", card.getSumCancelledCheckIn()));
         return messageService.getReplyMessage(chatId, stringBuilder.toString());

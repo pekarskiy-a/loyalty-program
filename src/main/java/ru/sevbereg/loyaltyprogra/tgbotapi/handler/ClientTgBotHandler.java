@@ -90,6 +90,7 @@ public class ClientTgBotHandler {
                 return botStateContext.processInputMessage(ENTER_PHONE_NUMBER, message);
             }
 
+            //todo можно попробовать добавить переключение состояний в зависимости от роли
             BotState botState = switch (inputMessage) {
                 case "/start" -> ASK_PHONE_NUMBER;
                 case "Информация о карте" -> ASK_CARD_INFO;
