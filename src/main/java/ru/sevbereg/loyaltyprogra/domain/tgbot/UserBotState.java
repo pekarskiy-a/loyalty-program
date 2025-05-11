@@ -21,8 +21,9 @@ import ru.sevbereg.loyaltyprogra.domain.AbstractIdentifiableEntity;
 @EqualsAndHashCode(callSuper = true)
 public class UserBotState extends AbstractIdentifiableEntity {
 
-    public UserBotState(Long tgUserId, BotState botState, Role role) {
+    public UserBotState(Long tgUserId, Long tgChatId, BotState botState, Role role) {
         this.tgUserId = tgUserId;
+        this.tgChatId = tgChatId;
         this.botState = botState;
         this.role = role;
     }

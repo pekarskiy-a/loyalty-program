@@ -23,7 +23,7 @@ public class AskClientCardMessageHandler implements InputMessageHandler {
     public SendMessage handle(Message message) {
         Long tgUserId = message.getFrom().getId();
         Long chatId = message.getChatId();
-        botStateService.saveOrUpdateEmployeeState(tgUserId, BotState.ENTER_PHONE_OR_CARD_ID, null);
+        botStateService.updateEmployeeState(tgUserId, BotState.ENTER_PHONE_OR_CARD_ID, null);
         return messageService.getReplyMessageFromSource(chatId, "replay.employee.enter.phoneOrCardNumber");
     }
 

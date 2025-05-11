@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.BotState;
+import ru.sevbereg.loyaltyprogra.domain.tgbot.Role;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.UserBotState;
 import ru.sevbereg.loyaltyprogra.service.tgbot.ReplyMessageService;
 import ru.sevbereg.loyaltyprogra.service.tgbot.UserBotStateService;
@@ -42,13 +43,13 @@ public class ClientTgBotHandler extends AbstractTgBotHandler {
 
         try {
             if (Objects.isNull(inputMessage) && message.hasContact()) {
-                botStateService.saveOrUpdateClientState(userId, ENTER_PHONE_NUMBER);
+                botStateService.updateClientState(userId, ENTER_PHONE_NUMBER);
                 return botStateContext.processInputMessage(ENTER_PHONE_NUMBER, message);
             }
 
             //todo можно попробовать добавить переключение состояний в зависимости от роли
             BotState botState = switch (inputMessage) {
-                case "/start" -> ASK_PHONE_NUMBER;
+                case "/start" -> botStateService.createIfNoExist(userId, chatId, ASK_PHONE_NUMBER, Role.CLIENT).getBotState();
                 case "Информация о карте" -> ASK_CARD_INFO;
                 case "Информация о программе лояльности" -> ASK_LP_INFO;
                 default -> Optional.ofNullable(botStateService.getUserBotStateByTgId(userId)) //todo добавить кейс с информацией, что бот не умеет работать с другим текстом
@@ -56,7 +57,6 @@ public class ClientTgBotHandler extends AbstractTgBotHandler {
                         .orElse(ASK_PHONE_NUMBER);
             };
 
-            botStateService.saveOrUpdateClientState(userId, botState);
             return botStateContext.processInputMessage(botState, message);
         } catch (Exception ex) {
             return replayMessageService.getReplyMessageFromSource(chatId, "error.unknown");

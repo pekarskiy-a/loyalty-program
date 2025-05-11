@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.BotState;
+import ru.sevbereg.loyaltyprogra.domain.tgbot.Role;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.UserBotState;
 import ru.sevbereg.loyaltyprogra.service.tgbot.ReplyMessageService;
 import ru.sevbereg.loyaltyprogra.service.tgbot.UserBotStateService;
@@ -33,13 +34,12 @@ public class EmployeeTgBotHandler extends AbstractTgBotHandler {
 
         try {
             BotState botState = switch (inputMessage) {
-                case "/start" -> SHOW_MAIN_MENU;
+                case "/start" -> botStateService.createIfNoExist(userId, chatId, SHOW_MAIN_MENU, Role.EMPLOYEE).getBotState();
                 case "Информация о клиенте", "Начислить/списать баллы" -> ASK_CLIENT_CARD;
                 default -> Optional.ofNullable(botStateService.getUserBotStateByTgId(userId)) //todo добавить кейс с информацией, что бот не умеет работать с другим текстом
                         .map(UserBotState::getBotState)
                         .orElse(SHOW_MAIN_MENU);
             };
-            botStateService.saveOrUpdateEmployeeState(userId, botState, null);
             return botStateContext.processInputMessage(botState, message);
         } catch (Exception ex) {
             return replayMessageService.getReplyMessageFromSource(chatId, "error.unknown");

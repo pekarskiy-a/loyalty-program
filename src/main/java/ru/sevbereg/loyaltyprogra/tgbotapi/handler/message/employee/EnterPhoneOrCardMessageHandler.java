@@ -57,7 +57,7 @@ public class EnterPhoneOrCardMessageHandler implements InputMessageHandler {
         stringBuilder.append("Без предоплаты: %s\n".formatted(card.isAvailableBooking()));
         stringBuilder.append("Кол-во незаездов: %s\n".formatted(card.getSumCancelledCheckIn()));
 
-        botStateService.saveOrUpdateEmployeeState(tgUserId, BotState.UPDATE_BONUS_BALANCE, card.getId()); //todo может возникнуть уязвимость при вводе без нажатия кнопки
+        botStateService.updateEmployeeState(tgUserId, BotState.UPDATE_BONUS_BALANCE, card.getId()); //todo может возникнуть уязвимость при вводе без нажатия кнопки
         SendMessage replyMessage = messageService.getReplyMessage(chatId, stringBuilder.toString());
         replyMessage.setReplyMarkup(getMessageButtons());
         return replyMessage;

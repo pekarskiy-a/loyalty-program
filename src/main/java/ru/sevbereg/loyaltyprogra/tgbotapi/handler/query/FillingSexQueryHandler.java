@@ -29,7 +29,7 @@ public class FillingSexQueryHandler implements InputCallbackQueryHandler {
         final Long userId = buttonQuery.getFrom().getId();
 
         clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(userId).sex(buttonQuery.getData()).build());
-        botStateService.saveOrUpdateClientState(userId, BotState.ASK_EMAIL);
+        botStateService.updateClientState(userId, BotState.ASK_EMAIL);
 
         return messageService.getReplyMessageFromSource(chatId, "replay.form.email");
     }

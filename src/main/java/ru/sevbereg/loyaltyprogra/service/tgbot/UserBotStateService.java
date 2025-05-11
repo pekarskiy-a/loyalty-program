@@ -25,12 +25,24 @@ public class UserBotStateService {
      * @param botState
      * @return
      */
-    public UserBotState saveOrUpdateClientState(Long tgUserId, BotState botState) {
-        return saveOrUpdateUserState(tgUserId, botState, Role.CLIENT, null);
+    public UserBotState updateClientState(Long tgUserId, BotState botState) {
+        return updateUserState(tgUserId, botState, null);
     }
 
-    public UserBotState saveOrUpdateEmployeeState(Long tgUserId, BotState botState, Long cardId) {
-        return saveOrUpdateUserState(tgUserId, botState, Role.EMPLOYEE, cardId);
+    public UserBotState updateEmployeeState(Long tgUserId, BotState botState, Long cardId) {
+        return updateUserState(tgUserId, botState, cardId);
+    }
+
+    public UserBotState createIfNoExist(Long tgUserId, Long tgChatId, BotState botState, Role role) {
+        UserBotState userBotState = repository.findByTgUserId(tgUserId);
+
+        if (Objects.nonNull(userBotState)) {
+            userBotState.setBotState(botState);
+            return userBotState;
+        }
+
+        UserBotState newState = new UserBotState(tgUserId, tgChatId, botState, role);
+        return repository.save(newState);
     }
 
     public UserBotState saveOrUpdate(UserBotState entity) {
@@ -41,18 +53,19 @@ public class UserBotStateService {
         return repository.findByTgUserId(tgUserId);
     }
 
-    private UserBotState saveOrUpdateUserState(Long tgUserId, BotState botState, Role role, Long cardId) {
+    private UserBotState updateUserState(Long tgUserId, BotState botState, Long cardId) {
         UserBotState userBotState = repository.findByTgUserId(tgUserId);
-        boolean isEqualsStatuses = Objects.nonNull(userBotState) && userBotState.getBotState().equals(botState);
+        if (Objects.isNull(userBotState)) {
+            throw new RuntimeException("Статус пользователя не найден");
+        }
+
+        boolean isEqualsStatuses = userBotState.getBotState().equals(botState);
         if (isEqualsStatuses) {
             return userBotState;
-        } else if (Objects.nonNull(userBotState)) {
-            userBotState.setBotState(botState);
-            setIfPresent(cardId, userBotState::setUpdateCardId);
-        } else {
-            userBotState = new UserBotState(tgUserId, botState, role);
-            setIfPresent(cardId, userBotState::setUpdateCardId);
         }
+
+        userBotState.setBotState(botState);
+        setIfPresent(cardId, userBotState::setUpdateCardId);
         return repository.save(userBotState);
     }
 

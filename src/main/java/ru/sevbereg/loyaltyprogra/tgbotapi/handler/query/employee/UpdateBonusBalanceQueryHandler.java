@@ -29,9 +29,9 @@ public class UpdateBonusBalanceQueryHandler implements InputCallbackQueryHandler
         String updateBalance = buttonQuery.getData();
 
         if (addBalanceButtonName.equalsIgnoreCase(updateBalance)) {
-            botStateService.saveOrUpdateEmployeeState(userId, BotState.ADD_BALANCE, null);
+            botStateService.updateEmployeeState(userId, BotState.ADD_BALANCE, null);
         } else if (writeOffBalanceButtonName.equalsIgnoreCase(updateBalance)) {
-            botStateService.saveOrUpdateEmployeeState(userId, BotState.WRITE_OFF_BALANCE, null);
+            botStateService.updateEmployeeState(userId, BotState.WRITE_OFF_BALANCE, null);
         }
         return replyMessageService.getReplyMessageFromSource(chatId, "replay.employee.balance.update");
     }

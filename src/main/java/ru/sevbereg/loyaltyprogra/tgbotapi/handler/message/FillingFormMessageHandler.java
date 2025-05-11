@@ -56,24 +56,24 @@ public class FillingFormMessageHandler extends AbstractInputMessageHandler {
         switch (currentClientBotState) {
             case ASK_SURNAME -> {
                 clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).surname(userAnswer).build());
-                botStateService.saveOrUpdateClientState(tgUserId, BotState.ASK_NAME);
+                botStateService.updateClientState(tgUserId, BotState.ASK_NAME);
                 return messageService.getReplyMessageFromSource(chatId, "replay.form.name");
             }
             case ASK_NAME -> {
                 clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).name(userAnswer).build());
-                botStateService.saveOrUpdateClientState(tgUserId, BotState.ASK_PATRONYMIC);
+                botStateService.updateClientState(tgUserId, BotState.ASK_PATRONYMIC);
                 return messageService.getReplyMessageFromSource(chatId, "replay.form.patronymic");
             }
             case ASK_PATRONYMIC -> {
                 clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).patronymic(userAnswer).build());
-                botStateService.saveOrUpdateClientState(tgUserId, BotState.ASK_BIRTHDATE);
+                botStateService.updateClientState(tgUserId, BotState.ASK_BIRTHDATE);
                 return messageService.getReplyMessageFromSource(chatId, "replay.form.birthdate");
             }
             case ASK_BIRTHDATE -> {
                 try {
                     var birthdate = LocalDate.parse(userAnswer);
                     clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).birthdate(birthdate).build());
-                    botStateService.saveOrUpdateClientState(tgUserId, BotState.ASK_SEX);
+                    botStateService.updateClientState(tgUserId, BotState.ASK_SEX);
                     SendMessage replyMessage = messageService.getReplyMessageFromSource(chatId, "replay.form.sex");
                     replyMessage.setReplyMarkup(getSexMessageButtons());
                     return replyMessage;
@@ -84,7 +84,7 @@ public class FillingFormMessageHandler extends AbstractInputMessageHandler {
             case ASK_SEX -> { //todo не используется, обрабатывается кнопкой
                 try {
                     clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).sex(userAnswer).build());
-                    botStateService.saveOrUpdateClientState(tgUserId, BotState.ASK_EMAIL);
+                    botStateService.updateClientState(tgUserId, BotState.ASK_EMAIL);
                     return messageService.getReplyMessageFromSource(chatId, "replay.form.email");
                 } catch (Exception ex) {
                     return messageService.getReplyMessageFromSource(chatId, "replay.form.sex.error");
@@ -92,7 +92,7 @@ public class FillingFormMessageHandler extends AbstractInputMessageHandler {
             }
             case ASK_EMAIL -> {
                 clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).email(userAnswer).build());
-                botStateService.saveOrUpdateClientState(tgUserId, BotState.FORM_FILLED);
+                botStateService.updateClientState(tgUserId, BotState.FORM_FILLED);
                 return mainMenuService.getMainMenuMessage(chatId, "reply.clientCreated");
             }
         }
