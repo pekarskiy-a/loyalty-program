@@ -43,7 +43,7 @@ public class EnterPhoneNumberMessageHandler extends AbstractInputMessageHandler 
             return createNewClient(clientPhoneNumber, tgUserId, chatId);
         }
 
-        botStateService.findByTgUserIdAndSaveState(tgUserId, BotState.CARD_FOUND);
+        botStateService.saveOrUpdateClientState(tgUserId, BotState.CARD_FOUND);
         return mainMenuService.getMainMenuMessage(chatId, "reply.clientAlreadyCreated");
     }
 
@@ -55,7 +55,7 @@ public class EnterPhoneNumberMessageHandler extends AbstractInputMessageHandler 
     private SendMessage createNewClient(String clientPhoneNumber, Long tgUserId, Long chatId) {
         clientFacade.createTemplate(clientPhoneNumber, tgUserId);
 
-        botStateService.findByTgUserIdAndSaveState(tgUserId, BotState.ASK_SURNAME);
+        botStateService.saveOrUpdateClientState(tgUserId, BotState.ASK_SURNAME);
 
         ReplyKeyboardRemove removeKeyboard = ReplyKeyboardRemove.builder()
                 .removeKeyboard(true)

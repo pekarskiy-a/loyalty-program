@@ -6,6 +6,7 @@ import ru.sevbereg.loyaltyprogra.domain.tgbot.BotState;
 
 public interface InputMessageHandler {
 
+    //Проверить методы и сделать транзакционными (где необходимо)
     SendMessage handle(Message message);
 
     BotState getHandlerName();

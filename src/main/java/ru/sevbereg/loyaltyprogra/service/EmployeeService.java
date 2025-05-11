@@ -17,4 +17,6 @@ public interface EmployeeService {
     List<Employee> findAll();
 
     Employee findByPhoneNumber(String phoneNumber);
+
+    Employee findByTgUserId(Long tgUserId);
 }

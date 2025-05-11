@@ -6,17 +6,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.sevbereg.loyaltyprogra.tgbotapi.LoyaltyProgramClientBot;
+import ru.sevbereg.loyaltyprogra.tgbotapi.LoyaltyProgramBot;
 
 @RestController
 @RequiredArgsConstructor
 public class WebHookClientController {
 
-    private final LoyaltyProgramClientBot loyaltyProgramClientBot;
+    private final LoyaltyProgramBot loyaltyProgramBot;
 
     @PostMapping
     public BotApiMethod<?> onUpdateReceived(@RequestBody Update update) {
-        return loyaltyProgramClientBot.onWebhookUpdateReceived(update);
+        return loyaltyProgramBot.onWebhookUpdateReceived(update);
     }
 
     //todo реализовать метод Get для получения инфо по карте

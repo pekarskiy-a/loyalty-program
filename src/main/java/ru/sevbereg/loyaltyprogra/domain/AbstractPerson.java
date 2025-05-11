@@ -3,12 +3,15 @@ package ru.sevbereg.loyaltyprogra.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import ru.sevbereg.loyaltyprogra.domain.tgbot.UserBotState;
 
 import java.time.LocalDate;
 
@@ -44,5 +47,9 @@ public class AbstractPerson extends AbstractMutableEntity {
 
     @Column(name = "c_birthdate")
     private LocalDate birthdate;
+
+    @OneToOne
+    @JoinColumn(name = "c_tg_user_id", referencedColumnName = "c_tg_user_id")
+    private UserBotState botState;
 
 }

@@ -43,4 +43,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee findByPhoneNumber(String phoneNumber) {
         return employeeRepository.findByPhoneNumber(phoneNumber);
     }
+
+    @Override
+    public Employee findByTgUserId(Long tgUserId) {
+        return employeeRepository.findByBotState_TgUserId(tgUserId);
+    }
 }

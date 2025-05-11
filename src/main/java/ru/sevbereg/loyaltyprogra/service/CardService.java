@@ -7,4 +7,6 @@ public interface CardService {
     Card update(Card entity);
 
     Card findById(Long id);
+
+    Card findByCardNumber(Long cardNumber);
 }

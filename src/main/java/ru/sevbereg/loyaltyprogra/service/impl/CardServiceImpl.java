@@ -21,4 +21,9 @@ public class CardServiceImpl implements CardService {
     public Card findById(Long id) {
         return repository.findById(id).orElse(null);
     }
+
+    @Override
+    public Card findByCardNumber(Long cardNumber) {
+        return repository.findByCardNumber(cardNumber);
+    }
 }

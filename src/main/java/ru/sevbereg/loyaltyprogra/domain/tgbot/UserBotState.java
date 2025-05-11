@@ -4,8 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import ru.sevbereg.loyaltyprogra.domain.AbstractIdentifiableEntity;
-import ru.sevbereg.loyaltyprogra.domain.Client;
 
 @Entity
 @Table(name = "t_user_bot_state")
@@ -22,22 +19,32 @@ import ru.sevbereg.loyaltyprogra.domain.Client;
 @Accessors(chain = true)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ClientBotState extends AbstractIdentifiableEntity {
+public class UserBotState extends AbstractIdentifiableEntity {
 
-    public ClientBotState(Long tgUserId, BotState botState) {
+    public UserBotState(Long tgUserId, BotState botState, Role role) {
         this.tgUserId = tgUserId;
         this.botState = botState;
+        this.role = role;
     }
 
     @Column(name = "c_tg_user_id", nullable = false, unique = true)
     private Long tgUserId;
 
+    @Column(name = "c_role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Column(name = "c_tg_chat_id")
+    private Long tgChatId;
+
     @Column(name = "c_bot_state", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
     private BotState botState;
 
-    @OneToOne
-    @JoinColumn(name = "c_client_id")
-    private Client pers;
+    /**
+     * Служебное поле для сохранения id карты клиента подлежащего обновлению
+     */
+    @Column(name = "c_update_card_id")
+    private Long updateCardId;
 
 }

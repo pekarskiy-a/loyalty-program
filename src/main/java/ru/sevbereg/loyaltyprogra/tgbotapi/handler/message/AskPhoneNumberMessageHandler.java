@@ -29,7 +29,7 @@ public class AskPhoneNumberMessageHandler extends AbstractInputMessageHandler {
     public SendMessage handle(Message message) {
         Long userId = message.getFrom().getId();
         Long chatId = message.getChatId();
-        botStateService.findByTgUserIdAndSaveState(userId, BotState.ENTER_PHONE_NUMBER);
+        botStateService.saveOrUpdateClientState(userId, BotState.ENTER_PHONE_NUMBER);
         SendMessage replyMessage = messageService.getReplyMessageFromSource(chatId, "reply.askPhoneNumber");
         replyMessage.setReplyMarkup(buildSharePhoneMarkup());
         return replyMessage;

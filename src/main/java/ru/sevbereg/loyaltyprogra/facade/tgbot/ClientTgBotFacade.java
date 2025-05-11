@@ -9,8 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.sevbereg.loyaltyprogra.domain.Card;
 import ru.sevbereg.loyaltyprogra.domain.Client;
 import ru.sevbereg.loyaltyprogra.domain.LoyaltyTier;
-import ru.sevbereg.loyaltyprogra.domain.tgbot.ClientBotState;
+import ru.sevbereg.loyaltyprogra.domain.tgbot.UserBotState;
 import ru.sevbereg.loyaltyprogra.enricher.ClientTemplateEnricher;
+import ru.sevbereg.loyaltyprogra.service.CardService;
 import ru.sevbereg.loyaltyprogra.service.ClientService;
 import ru.sevbereg.loyaltyprogra.service.LoyaltyTierService;
 import ru.sevbereg.loyaltyprogra.service.tgbot.UserBotStateService;
@@ -19,6 +20,7 @@ import ru.sevbereg.loyaltyprogra.util.PhoneFormatterUtils;
 
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.CRC32;
 
@@ -33,7 +35,9 @@ public class ClientTgBotFacade {
 
     private final ClientTemplateEnricher enricher;
 
-    protected final UserBotStateService botStateService;
+    private final CardService cardService;
+
+    private final UserBotStateService botStateService;
 
     @Value("${default.loyalty.tier.id}")
     private Long defaultLoyaltyTierId;
@@ -41,7 +45,7 @@ public class ClientTgBotFacade {
     public Client createTemplate(String phoneNumber, Long tgUserId) {
         String formattedPhoneNumber = PhoneFormatterUtils.normalizeRuPhone(phoneNumber);
         LoyaltyTier loyaltyTier = loyaltyTierService.findById(defaultLoyaltyTierId);
-        ClientBotState currentClientBotState = botStateService.getUserBotStateByTgId(tgUserId);
+        UserBotState currentUserBotState = botStateService.getUserBotStateByTgId(tgUserId);
 
         Card card = new Card();
         card.setLoyaltyTier(loyaltyTier);
@@ -54,7 +58,7 @@ public class ClientTgBotFacade {
         Client client = new Client();
         client.setPhoneNumber(formattedPhoneNumber);
         client.setCards(cards);
-        client.setBotState(currentClientBotState);
+        client.setBotState(currentUserBotState);
 
         return clientService.create(client);
     }
@@ -78,6 +82,18 @@ public class ClientTgBotFacade {
 
     public Client findByTgUserId(Long tgUserId) {
         return clientService.findByTgUserId(tgUserId);
+    }
+
+    public Client findByPhoneOrCardNumber(String request) {
+        if (Objects.isNull(request)) {
+            return null;
+        }
+        try {
+            return this.findByPhoneNumber(request);
+        } catch (IllegalArgumentException ex) {
+            Card card = cardService.findByCardNumber(Long.parseLong(request));
+            return Optional.ofNullable(card).map(Card::getClient).orElse(null);
+        }
     }
 
     private long generateCardNumber(String phoneNumber) { // todo вынести в утилитку

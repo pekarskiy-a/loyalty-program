@@ -5,6 +5,8 @@ import ru.sevbereg.loyaltyprogra.domain.Employee;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-    Employee findByPhoneNumber(String id);
+    Employee findByPhoneNumber(String phoneNumber);
+
+    Employee findByBotState_TgUserId(Long tgUserId);
 
 }
