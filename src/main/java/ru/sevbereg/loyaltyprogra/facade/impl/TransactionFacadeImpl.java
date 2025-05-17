@@ -7,13 +7,12 @@ import ru.sevbereg.loyaltyprogra.controller.api.TransactionCreateRq;
 import ru.sevbereg.loyaltyprogra.domain.Card;
 import ru.sevbereg.loyaltyprogra.domain.Employee;
 import ru.sevbereg.loyaltyprogra.domain.Transaction;
+import ru.sevbereg.loyaltyprogra.facade.CardFacade;
 import ru.sevbereg.loyaltyprogra.facade.TransactionFacade;
 import ru.sevbereg.loyaltyprogra.mapper.TransactionMapper;
-import ru.sevbereg.loyaltyprogra.service.CardService;
 import ru.sevbereg.loyaltyprogra.service.EmployeeService;
 import ru.sevbereg.loyaltyprogra.service.TransactionService;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
 @Service
@@ -26,7 +25,7 @@ public class TransactionFacadeImpl implements TransactionFacade {
 
     private final EmployeeService employeeService;
 
-    private final CardService cardService;
+    private final CardFacade cardFacade;
 
     @Override
     @Transactional
@@ -39,26 +38,10 @@ public class TransactionFacadeImpl implements TransactionFacade {
             return transactionFromDb;
         }
 
-        Card cardForUpdate = cardService.findById(request.getCardId());
-
-        if (Objects.isNull(cardForUpdate)) {
-            throw new IllegalArgumentException("Карта не найдена. ID: " + request.getCardId());
-        }
-
-        BigDecimal balanceChange = cardForUpdate.getBonusBalance();
-
-        if (Objects.nonNull(request.getBonusEarned())) {
-            balanceChange = balanceChange.add(request.getBonusEarned());
-        }
-        if (Objects.nonNull(request.getBonusSpent())) {
-            balanceChange = balanceChange.subtract(request.getBonusSpent());
-        }
-
-        cardForUpdate.setBonusBalance(balanceChange);
-
+        Card updatedCard = cardFacade.updateTierAndBalance(request.getCardId(), request.getBonusEarned(), request.getBonusSpent());
         Employee employee = employeeService.findById(request.getEmployeeId());
 
-        transaction.setCard(cardForUpdate);
+        transaction.setCard(updatedCard);
         transaction.setEmployee(employee);
 
         return transactionService.create(transaction);

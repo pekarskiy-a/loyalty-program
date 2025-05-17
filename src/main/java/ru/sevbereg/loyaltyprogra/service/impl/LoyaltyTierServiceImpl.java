@@ -6,6 +6,8 @@ import ru.sevbereg.loyaltyprogra.domain.LoyaltyTier;
 import ru.sevbereg.loyaltyprogra.repository.LoyaltyTierRepository;
 import ru.sevbereg.loyaltyprogra.service.LoyaltyTierService;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class LoyaltyTierServiceImpl implements LoyaltyTierService {
@@ -20,6 +22,11 @@ public class LoyaltyTierServiceImpl implements LoyaltyTierService {
     @Override
     public LoyaltyTier findById(Long id) {
         return repository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<LoyaltyTier> findAllActiveOrderByNextValueAsc() {
+        return repository.findAllByActiveTrueOrderByNextLevelValueAsc();
     }
 
     @Override
