@@ -44,7 +44,7 @@ public abstract class UpdateBalanceMessageHandler implements InputMessageHandler
                 .cardId(updateCardId)
                 .build();
 
-        transactionFacade.create(transaction);
+        transactionFacade.createAndSendTgMessage(transaction);
         botStateService.updateEmployeeState(tgUserId, BotState.SHOW_MAIN_MENU, null);
         return replyMessageService.getReplyMessageFromSource(chatId, "replay.employee.balance.update.success");
     }

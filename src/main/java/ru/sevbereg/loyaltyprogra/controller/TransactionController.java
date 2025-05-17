@@ -23,7 +23,7 @@ public class TransactionController {
     public ResponseEntity<?> create(@RequestBody TransactionCreateRq request) {
         Transaction transaction;
         try {
-            transaction = facade.create(request);
+            transaction = facade.createAndSendTgMessage(request);
         } catch (ValidationException | IllegalArgumentException ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception ex) {

@@ -5,7 +5,7 @@ import ru.sevbereg.loyaltyprogra.domain.Transaction;
 
 public interface TransactionFacade {
 
-    Transaction create(TransactionCreateRq request);
+    Transaction createAndSendTgMessage(TransactionCreateRq request);
 
 
 }

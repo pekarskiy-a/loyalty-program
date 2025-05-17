@@ -38,6 +38,7 @@ public class UserBotStateService {
 
         if (Objects.nonNull(userBotState)) {
             userBotState.setBotState(botState);
+            userBotState.setTgChatId(tgChatId);
             return userBotState;
         }
 
