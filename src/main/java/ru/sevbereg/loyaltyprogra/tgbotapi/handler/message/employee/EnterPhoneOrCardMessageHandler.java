@@ -57,7 +57,7 @@ public class EnterPhoneOrCardMessageHandler implements InputMessageHandler {
         stringBuilder.append("Без предоплаты: %s\n".formatted(card.isAvailableBooking()));
         stringBuilder.append("Кол-во незаездов: %s\n".formatted(card.getSumCancelledCheckIn()));
 
-        botStateService.updateEmployeeState(tgUserId, BotState.UPDATE_BONUS_BALANCE, card.getId()); //todo может возникнуть уязвимость при вводе без нажатия кнопки
+        botStateService.updateEmployeeState(tgUserId, BotState.CLIENT_INFO_BUTTONS, card.getId()); //todo может возникнуть уязвимость при вводе без нажатия кнопки
         SendMessage replyMessage = messageService.getReplyMessage(chatId, stringBuilder.toString());
         replyMessage.setReplyMarkup(getMessageButtons());
         return replyMessage;
@@ -76,6 +76,7 @@ public class EnterPhoneOrCardMessageHandler implements InputMessageHandler {
     private InlineKeyboardMarkup getMessageButtons() {
         String addBalanceButtonName = localeMessageService.getMessage("button.employee.client.balance.add");
         String writeOffBalanceButtonName = localeMessageService.getMessage("button.employee.client.balance.writeOff");
+        String addCancelledCheckIn = localeMessageService.getMessage("button.employee.client.cancelledCheckIn.add");
 
         final var addBalanceButton = InlineKeyboardButton.builder()
                 .text(addBalanceButtonName)
@@ -87,10 +88,18 @@ public class EnterPhoneOrCardMessageHandler implements InputMessageHandler {
                 .callbackData(writeOffBalanceButtonName)
                 .build();
 
-        List<InlineKeyboardButton> keyboardButtonsRowSex = new ArrayList<>();
-        keyboardButtonsRowSex.add(addBalanceButton);
-        keyboardButtonsRowSex.add(writeOffBalanceButton);
+        final var addCancelledCheckInButton = InlineKeyboardButton.builder()
+                .text(addCancelledCheckIn)
+                .callbackData(addCancelledCheckIn)
+                .build();
 
-        return InlineKeyboardMarkup.builder().keyboardRow(keyboardButtonsRowSex).build();
+        List<InlineKeyboardButton> keyboardButtonsRowBonusChange = new ArrayList<>();
+        keyboardButtonsRowBonusChange.add(addBalanceButton);
+        keyboardButtonsRowBonusChange.add(writeOffBalanceButton);
+
+        List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+        keyboardButtonsRow.add(addCancelledCheckInButton);
+
+        return InlineKeyboardMarkup.builder().keyboard(List.of(keyboardButtonsRowBonusChange, keyboardButtonsRow)).build();
     }
 }

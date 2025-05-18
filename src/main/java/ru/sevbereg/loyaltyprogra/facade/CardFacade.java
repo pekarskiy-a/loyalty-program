@@ -17,4 +17,12 @@ public interface CardFacade {
      */
     Card updateTierAndBalance(Long cardId, BigDecimal bonusEarned, BigDecimal bonusSpent) throws IllegalArgumentException;
 
+    /**
+     * Метод добавления не заезда, проверки доступности броней без предоплаты и журналирования
+     *
+     * @param cardId
+     * @param employeeTgId
+     * @return
+     */
+    Card addCancelledCheckIn(Long cardId, Long employeeTgId);
 }

@@ -46,12 +46,12 @@ public class TransactionFacadeImpl implements TransactionFacade {
         transaction.setCard(updatedCard);
         transaction.setEmployee(employee);
 
-        Optional<Long> clientTgChatId = Optional.ofNullable(updatedCard.getClient())
+        Optional.ofNullable(updatedCard.getClient())
                 .map(AbstractPerson::getBotState)
-                .map(UserBotState::getTgChatId);
+                .map(UserBotState::getTgChatId)
+                .ifPresent(chatId ->
+                        sendClientMessageService.sendBalanceUpdated(chatId, request.getBonusEarned(), request.getBonusSpent(), updatedCard.getBonusBalance()));
 
-        clientTgChatId.ifPresent(chatId ->
-                sendClientMessageService.sendBalanceUpdated(chatId, request.getBonusEarned(), request.getBonusSpent(), updatedCard.getBonusBalance()));
         return transactionService.create(transaction);
     }
 

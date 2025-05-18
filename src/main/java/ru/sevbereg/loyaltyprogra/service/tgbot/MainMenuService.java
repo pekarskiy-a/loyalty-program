@@ -63,11 +63,16 @@ public class MainMenuService {
         KeyboardRow row2 = new KeyboardRow();
         row2.add(addBalance);
 
+        KeyboardButton addCancelledCheckIn = KeyboardButton.builder().text(localeMessageService.getMessage("button.employee.menu.client.addCancelledCheckIn")).build();
+        KeyboardRow row3 = new KeyboardRow();
+        row3.add(addCancelledCheckIn);
+
         //todo добавить кнопку редактирования клиента
 
         List<KeyboardRow> keyboard = new ArrayList<>();
         keyboard.add(row1);
         keyboard.add(row2);
+        keyboard.add(row3);
 
         return ReplyKeyboardMarkup.builder()
                 .selective(true)

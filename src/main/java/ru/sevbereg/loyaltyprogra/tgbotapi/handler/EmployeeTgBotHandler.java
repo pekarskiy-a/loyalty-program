@@ -35,7 +35,9 @@ public class EmployeeTgBotHandler extends AbstractTgBotHandler {
         try {
             BotState botState = switch (inputMessage) {
                 case "/start" -> botStateService.createIfNoExist(userId, chatId, SHOW_MAIN_MENU, Role.EMPLOYEE).getBotState();
-                case "Информация о клиенте", "Начислить/списать баллы" -> ASK_CLIENT_CARD;
+                case "Информация о клиенте",
+                        "Начислить/списать баллы",
+                        "Отметить не заезд" -> ASK_CLIENT_CARD;
                 default -> Optional.ofNullable(botStateService.getUserBotStateByTgId(userId)) //todo добавить кейс с информацией, что бот не умеет работать с другим текстом
                         .map(UserBotState::getBotState)
                         .orElse(SHOW_MAIN_MENU);
