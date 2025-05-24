@@ -3,6 +3,7 @@ package ru.sevbereg.loyaltyprogra.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -22,7 +23,7 @@ import java.math.BigDecimal;
 public class LoyaltyTier extends AbstractMutableEntity {
 
     @JsonIgnoreProperties("tiers")
-    @ManyToOne(targetEntity = LoyaltyProgram.class)
+    @ManyToOne(targetEntity = LoyaltyProgram.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "c_loyalty_program_id")
     private LoyaltyProgram loyaltyProgram;
 
