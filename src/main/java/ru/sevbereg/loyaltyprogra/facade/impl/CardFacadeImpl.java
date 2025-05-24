@@ -3,6 +3,7 @@ package ru.sevbereg.loyaltyprogra.facade.impl;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sevbereg.loyaltyprogra.domain.Card;
@@ -21,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -33,31 +35,28 @@ public class CardFacadeImpl implements CardFacade {
 
     @Override
     public Card updateTierAndBalance(Long cardId, BigDecimal bonusEarned, BigDecimal bonusSpent) throws IllegalArgumentException {
-        Card cardForUpdate = cardService.findById(cardId);
-
-        if (Objects.isNull(cardForUpdate)) {
-            throw new IllegalArgumentException("Карта не найдена. ID: " + cardId);
-        }
+        log.info("Обновление баланса по cardId: {}", cardId);
+        Card cardForUpdate = this.findByIdOrThrow(cardId);
 
         BigDecimal newBalance = this.getNewBalance(cardForUpdate.getBonusBalance(), bonusEarned, bonusSpent);
         LoyaltyTier newTier = this.getNewTier(cardForUpdate.getLoyaltyTier(), newBalance);
 
         if (Objects.nonNull(newTier)) {
+            log.info("Смена категории программы с cardId: {}", cardId);
             cardForUpdate.setLoyaltyTier(newTier);
         }
         cardForUpdate.setAvailableBooking(newTier.isAvailableBooking());
         cardForUpdate.setSumCancelledCheckIn(0);
         cardForUpdate.setBonusBalance(newBalance);
-        return cardService.update(cardForUpdate);
+        Card updatedCard = cardService.update(cardForUpdate);
+        log.info("Карта с cardId: {} успешно обновлена", cardId);
+        return updatedCard;
     }
 
     @Override
-    public Card addCancelledCheckIn(Long cardId, Long employeeTgId) {
-        Card cardForUpdate = cardService.findById(cardId);
-
-        if (Objects.isNull(cardForUpdate)) {
-            throw new IllegalArgumentException("Карта не найдена. ID: " + cardId);
-        }
+    public Card addCancelledCheckIn(Long cardId, Long employeeTgId) throws IllegalArgumentException {
+        log.info("Добавление отметки об отмени брони по карте cardId: {}", cardId);
+        Card cardForUpdate = this.findByIdOrThrow(cardId);
 
         CardDto oldCardInfo = CardDto.builder()
                 .cardId(cardId)
@@ -79,6 +78,15 @@ public class CardFacadeImpl implements CardFacade {
 
         logService.logAction(this.buildEvent(JsonUtils.toJson(oldCardInfo), JsonUtils.toJson(newCardInfo), employeeTgId));
         return cardService.update(cardForUpdate);
+    }
+
+    private Card findByIdOrThrow(Long cardId) throws IllegalArgumentException {
+        Card cardForUpdate = cardService.findById(cardId);
+
+        if (Objects.isNull(cardForUpdate)) {
+            throw new IllegalArgumentException("Карта не найдена. ID: " + cardId);
+        }
+        return cardForUpdate;
     }
 
     private BigDecimal getNewBalance(BigDecimal currentBalance, BigDecimal bonusEarned, BigDecimal bonusSpent) {

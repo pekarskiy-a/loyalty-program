@@ -18,6 +18,7 @@ public class FormFilledMessageHandler extends AbstractInputMessageHandler {
 
     @Override
     public SendMessage handle(Message message) {
+        log.trace("CLIENT. Обработчик завершения регистрации");
         return messageService.getReplyMessageFromSource(message.getChatId(), "reply.clientCreated");
     }
 

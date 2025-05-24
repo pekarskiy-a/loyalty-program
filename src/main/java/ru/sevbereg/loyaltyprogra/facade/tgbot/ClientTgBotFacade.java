@@ -3,6 +3,7 @@ package ru.sevbereg.loyaltyprogra.facade.tgbot;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import ru.sevbereg.loyaltyprogra.service.ClientService;
 import ru.sevbereg.loyaltyprogra.service.LoyaltyTierService;
 import ru.sevbereg.loyaltyprogra.service.tgbot.UserBotStateService;
 import ru.sevbereg.loyaltyprogra.tgbotapi.api.UpdateClientTemplate;
+import ru.sevbereg.loyaltyprogra.util.JsonUtils;
 import ru.sevbereg.loyaltyprogra.util.PhoneFormatterUtils;
 
 import java.util.HashSet;
@@ -24,6 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.zip.CRC32;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -43,6 +46,7 @@ public class ClientTgBotFacade {
     private Long defaultLoyaltyTierId;
 
     public Client createTemplate(String phoneNumber, Long tgUserId) {
+        log.info("Создание шаблона клиента");
         String formattedPhoneNumber = PhoneFormatterUtils.normalizeRuPhone(phoneNumber);
         LoyaltyTier loyaltyTier = loyaltyTierService.findById(defaultLoyaltyTierId);
         UserBotState currentUserBotState = botStateService.getUserBotStateByTgId(tgUserId);
@@ -60,27 +64,37 @@ public class ClientTgBotFacade {
         client.setCards(cards);
         client.setBotState(currentUserBotState);
 
-        return clientService.create(client);
+        Client createdClient = clientService.create(client);
+        log.info("Клиент создан");
+        return createdClient;
     }
 
     public Client updateClientTemplate(@Valid UpdateClientTemplate clientDto) {
+        log.info("Обновление шаблона клиента с tgUserId: {}", clientDto.getTgUserId());
+        log.debug("Запрос на обновление клиента: {}{}", System.lineSeparator(), JsonUtils.toJson(clientDto));
         if (Objects.isNull(clientDto.getTgUserId())) {
-            throw new IllegalArgumentException("Не заполнен TgUserId");
+            String message = "Не заполнен tgUserId";
+            log.error(message);
+            throw new IllegalArgumentException(message);
         }
         Client clientTemplate = clientService.findByTgUserId(clientDto.getTgUserId()); //todo если приходит null, то возвращается первый попавшийся, проверить почему так
         if (Objects.isNull(clientTemplate)) {
-            throw new NotFoundException("Клиент не найден");
+            String message = "Клиент не найден";
+            log.error(message);
+            throw new NotFoundException(message);
         }
         enricher.enrich(clientTemplate, clientDto);
         return clientTemplate;
     }
 
     public Client findByPhoneNumber(String phoneNumber) {
+        log.info("Поиск клиента по phoneNumber: {}", phoneNumber);
         String formattedPhoneNumber = PhoneFormatterUtils.normalizeRuPhone(phoneNumber);
         return clientService.findByPhoneNumber(formattedPhoneNumber);
     }
 
     public Client findByTgUserId(Long tgUserId) {
+        log.info("Поиск клиента по tgUserId: {}", tgUserId);
         return clientService.findByTgUserId(tgUserId);
     }
 
@@ -89,8 +103,10 @@ public class ClientTgBotFacade {
             return null;
         }
         try {
+            log.info("Поиск клиента по phoneNumber: {}", request);
             return this.findByPhoneNumber(request);
         } catch (IllegalArgumentException ex) {
+            log.info("Номер не валиден, поиск клиента по cardNumber: {}", request);
             Card card = cardService.findByCardNumber(Long.parseLong(request));
             return Optional.ofNullable(card).map(Card::getClient).orElse(null);
         }

@@ -23,7 +23,7 @@ public class EmployeeTgBotHandler extends AbstractTgBotHandler {
     public EmployeeTgBotHandler(BotStateContext botStateContext,
                                 UserBotStateService botStateService,
                                 ReplyMessageService replayMessageService) {
-        super(botStateContext, botStateService, replayMessageService);
+        super(botStateContext, botStateService, replayMessageService, log);
     }
 
     @Override

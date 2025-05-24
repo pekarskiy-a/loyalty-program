@@ -1,6 +1,7 @@
 package ru.sevbereg.loyaltyprogra.tgbotapi.handler.query.employee;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,6 +13,7 @@ import ru.sevbereg.loyaltyprogra.service.tgbot.ReplyMessageService;
 import ru.sevbereg.loyaltyprogra.service.tgbot.UserBotStateService;
 import ru.sevbereg.loyaltyprogra.tgbotapi.handler.InputCallbackQueryHandler;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ClientInfoButtonsQueryHandler implements InputCallbackQueryHandler {
@@ -30,13 +32,14 @@ public class ClientInfoButtonsQueryHandler implements InputCallbackQueryHandler 
         String writeOffBalanceButtonName = localeMessageService.getMessage("button.employee.client.balance.writeOff");
         String addCancelledCheckIn = localeMessageService.getMessage("button.employee.menu.client.addCancelledCheckIn");
 
-        String updateBalance = buttonQuery.getData();
+        String buttonData = buttonQuery.getData();
 
-        if (addBalanceButtonName.equalsIgnoreCase(updateBalance)) {
+        log.trace("EMPLOYEE. Обработка кнопки карточки клиента с информацией: {}", buttonData);
+        if (addBalanceButtonName.equalsIgnoreCase(buttonData)) {
             botStateService.updateEmployeeState(userId, BotState.ADD_BALANCE, null);
-        } else if (writeOffBalanceButtonName.equalsIgnoreCase(updateBalance)) {
+        } else if (writeOffBalanceButtonName.equalsIgnoreCase(buttonData)) {
             botStateService.updateEmployeeState(userId, BotState.WRITE_OFF_BALANCE, null);
-        } else if (addCancelledCheckIn.equalsIgnoreCase(updateBalance)) {
+        } else if (addCancelledCheckIn.equalsIgnoreCase(buttonData)) {
             return this.handleAddCancelledCheckIn(userId, chatId);
         }
 

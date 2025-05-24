@@ -23,9 +23,7 @@ import java.util.List;
 @Component
 public class FillingFormMessageHandler extends AbstractInputMessageHandler {
 
-    //todo подумать над заполнение формы в мапе
     private final ClientTgBotFacade clientFacade;
-
     private final MainMenuService mainMenuService;
 
     public FillingFormMessageHandler(UserBotStateService botStateService,
@@ -55,16 +53,19 @@ public class FillingFormMessageHandler extends AbstractInputMessageHandler {
     private SendMessage fillingForm(BotState currentClientBotState, String userAnswer, Long tgUserId, Long chatId) {
         switch (currentClientBotState) {
             case ASK_SURNAME -> {
+                log.trace("CLIENT. Обработка фамилии");
                 clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).surname(userAnswer).build());
                 botStateService.updateClientState(tgUserId, BotState.ASK_NAME);
                 return messageService.getReplyMessageFromSource(chatId, "replay.form.name");
             }
             case ASK_NAME -> {
+                log.trace("CLIENT. Обработка имени");
                 clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).name(userAnswer).build());
                 botStateService.updateClientState(tgUserId, BotState.ASK_PATRONYMIC);
                 return messageService.getReplyMessageFromSource(chatId, "replay.form.patronymic");
             }
             case ASK_PATRONYMIC -> {
+                log.trace("CLIENT. Обработка отчества");
                 clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).patronymic(userAnswer).build());
                 botStateService.updateClientState(tgUserId, BotState.ASK_BIRTHDATE);
                 return messageService.getReplyMessageFromSource(chatId, "replay.form.birthdate");
@@ -72,12 +73,14 @@ public class FillingFormMessageHandler extends AbstractInputMessageHandler {
             case ASK_BIRTHDATE -> {
                 try {
                     var birthdate = LocalDate.parse(userAnswer);
+                    log.trace("CLIENT. Обработка дня рождения");
                     clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).birthdate(birthdate).build());
                     botStateService.updateClientState(tgUserId, BotState.ASK_SEX);
                     SendMessage replyMessage = messageService.getReplyMessageFromSource(chatId, "replay.form.sex");
                     replyMessage.setReplyMarkup(getSexMessageButtons());
                     return replyMessage;
-                } catch (DateTimeParseException e) {
+                } catch (DateTimeParseException ex) {
+                    log.error("CLIENT. Ошибка обработки дня рождения.", ex);
                     return messageService.getReplyMessageFromSource(chatId, "replay.form.birthdate.error");
                 }
             }
@@ -91,6 +94,7 @@ public class FillingFormMessageHandler extends AbstractInputMessageHandler {
                 }
             }
             case ASK_EMAIL -> {
+                log.trace("CLIENT. Обработка почты");
                 clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).email(userAnswer).build());
                 botStateService.updateClientState(tgUserId, BotState.FORM_FILLED);
                 return mainMenuService.getMainMenuMessage(chatId, "reply.clientCreated");

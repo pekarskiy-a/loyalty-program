@@ -55,11 +55,4 @@ public class BotStateContext {
         };
     }
 
-//    private boolean isCardCreatedStatus(BotState currentState) {
-//        return switch (currentState) {
-//            case FORM_FILLED, CARD_FOUND, SHOW_MAIN_MENU -> true;
-//            default -> false;
-//        };
-//    }
-
 }

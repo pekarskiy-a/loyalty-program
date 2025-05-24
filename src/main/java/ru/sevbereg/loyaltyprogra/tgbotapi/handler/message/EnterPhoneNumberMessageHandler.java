@@ -35,11 +35,12 @@ public class EnterPhoneNumberMessageHandler extends AbstractInputMessageHandler 
         Long tgUserId = message.getFrom().getId();
         Long chatId = message.getChatId();
 
+        log.trace("CLIENT. Обработка номера клиента");
         String clientPhoneNumber = PhoneFormatterUtils.normalizeRuPhone(message.getContact().getPhoneNumber());
-
         Client client = clientFacade.findByPhoneNumber(clientPhoneNumber);
 
         if (Objects.isNull(client)) {
+            log.trace("CLIENT. Клиент с номером: {} уже существует", clientPhoneNumber);
             return createNewClient(clientPhoneNumber, tgUserId, chatId);
         }
 

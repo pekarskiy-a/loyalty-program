@@ -1,6 +1,7 @@
 package ru.sevbereg.loyaltyprogra.tgbotapi;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
@@ -17,6 +18,7 @@ import ru.sevbereg.loyaltyprogra.util.JsonUtils;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -41,16 +43,31 @@ public class LoyaltyProgramBot extends TelegramWebhookBot {
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
+        String rqUid = UUID.randomUUID().toString();
         Long tgUserId = this.getTgUserId(update);
 
-        if (Objects.nonNull(tgUserId)) {
-            Employee employee = employeeFacade.findByTgUserId(tgUserId);
-            if (Objects.nonNull(employee)) {
-                return employeeHandler.handleUpdate(update);
+        MDC.put("rqUid", rqUid);
+        MDC.put("tgUserId", String.valueOf(tgUserId));
+
+        try {
+            if (Objects.nonNull(tgUserId)) {
+                Employee employee = employeeFacade.findByTgUserId(tgUserId);
+                if (Objects.nonNull(employee)) {
+                    log.info("Получено сообщение от сотрудника");
+                    BotApiMethod<?> message = employeeHandler.handleUpdate(update);
+                    log.debug("Сообщение отправлено: {}{}", System.lineSeparator(), JsonUtils.toJson(message));
+                    return message;
+                }
             }
+
+            log.info("Получено сообщение от клиента");
+            log.debug("Сообщение от клиента: {}{}", System.lineSeparator(), JsonUtils.toJson(update));
+            BotApiMethod<?> message = clientHandler.handleUpdate(update);
+            log.debug("Сообщение отправлено: {}{}", System.lineSeparator(), JsonUtils.toJson(message));
+            return message;
+        } finally {
+            MDC.clear();
         }
-        System.err.println(JsonUtils.toJson(update)); //todo посмотреть что можно вытащить
-        return clientHandler.handleUpdate(update);
     }
 
     private Long getTgUserId(Update update) {

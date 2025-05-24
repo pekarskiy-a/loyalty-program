@@ -28,6 +28,7 @@ public class FillingSexQueryHandler implements InputCallbackQueryHandler {
         final Long chatId = buttonQuery.getMessage().getChatId();
         final Long userId = buttonQuery.getFrom().getId();
 
+        log.trace("CLIENT. Обработка кнопки пола");
         clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(userId).sex(buttonQuery.getData()).build());
         botStateService.updateClientState(userId, BotState.ASK_EMAIL);
 

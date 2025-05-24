@@ -27,6 +27,7 @@ public class CardInfoMessageHandler extends AbstractInputMessageHandler {
         Long tgUserId = message.getFrom().getId();
         Long chatId = message.getChatId();
 
+        log.trace("CLIENT. Обработка запроса информации о карте");
         Client client = clientTgBotFacade.findByTgUserId(tgUserId);
         Card card = client.getCards().stream().findFirst().orElse(null);
         var stringBuilder = new StringBuilder();

@@ -1,6 +1,7 @@
 package ru.sevbereg.loyaltyprogra.facade.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sevbereg.loyaltyprogra.controller.api.TransactionCreateRq;
@@ -19,6 +20,7 @@ import ru.sevbereg.loyaltyprogra.service.tgbot.SendClientMessageService;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TransactionFacadeImpl implements TransactionFacade {
@@ -32,11 +34,13 @@ public class TransactionFacadeImpl implements TransactionFacade {
     @Override
     @Transactional
     public Transaction createAndSendTgMessage(TransactionCreateRq request) {
+        log.info("Начало транзакции по cardId: {}", request.getCardId());
         var transaction = transactionMapper.mapToTransaction(request);
 
         Transaction transactionFromDb = transactionService.findByIdempotencyKey(transaction.getIdempotencyKey());
 
         if (Objects.nonNull(transactionFromDb)) {
+            log.info("Транзакция найдена по ключу идемпотентности: {}", transaction.getIdempotencyKey());
             return transactionFromDb;
         }
 
@@ -52,7 +56,9 @@ public class TransactionFacadeImpl implements TransactionFacade {
                 .ifPresent(chatId ->
                         sendClientMessageService.sendBalanceUpdated(chatId, request.getBonusEarned(), request.getBonusSpent(), updatedCard.getBonusBalance()));
 
-        return transactionService.create(transaction);
+        Transaction createdTransaction = transactionService.create(transaction);
+        log.info("Транзакция по cardId: {} выполнена успешно", request.getCardId());
+        return createdTransaction;
     }
 
 }

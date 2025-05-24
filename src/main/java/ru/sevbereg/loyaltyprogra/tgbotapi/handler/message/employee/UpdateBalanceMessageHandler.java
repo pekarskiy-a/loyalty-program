@@ -1,6 +1,7 @@
 package ru.sevbereg.loyaltyprogra.tgbotapi.handler.message.employee;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -21,6 +22,7 @@ public abstract class UpdateBalanceMessageHandler implements InputMessageHandler
     private final EmployeeTgBotFacade employeeFacade;
     private final TransactionFacade transactionFacade;
     private final ReplyMessageService replyMessageService;
+    private final Logger log;
 
     @Override
     @Transactional
@@ -34,6 +36,7 @@ public abstract class UpdateBalanceMessageHandler implements InputMessageHandler
         try {
             bonus = new BigDecimal(message.getText());
         } catch (NumberFormatException ex) {
+            log.trace("EMPLOYEE. Ошибка преобразование бонусов.{}{}", System.lineSeparator(), ex.getStackTrace());
             replyMessageService.getReplyMessageFromSource(chatId, "replay.employee.error.bigdecimal");
         }
 

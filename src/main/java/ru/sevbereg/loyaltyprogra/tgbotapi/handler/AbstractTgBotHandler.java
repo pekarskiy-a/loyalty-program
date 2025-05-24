@@ -1,7 +1,7 @@
 package ru.sevbereg.loyaltyprogra.tgbotapi.handler;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -15,41 +15,40 @@ import ru.sevbereg.loyaltyprogra.tgbotapi.BotStateContext;
 
 import java.util.Objects;
 
-@Slf4j
 @RequiredArgsConstructor
 public abstract class AbstractTgBotHandler {
 
     protected final BotStateContext botStateContext;
     protected final UserBotStateService botStateService;
     protected final ReplyMessageService replayMessageService;
+    protected final Logger log;
 
     public BotApiMethod<?> handleUpdate(Update update) {
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
-            log.info("Новый callbackQuery от пользователя userID:{}, с данными: {}",
-                    callbackQuery.getFrom().getId(), callbackQuery.getData());
+            log.trace("Начало обработки callbackQuery с данными: {}", callbackQuery.getData());
             return processInputCallbackQuery(callbackQuery);
         }
 
         final Message message = update.getMessage();
         if (Objects.isNull(message)) {
+            log.warn("Отправлено пустое сообщение");
             return null;
         }
 
         if (!message.hasText() && !message.hasContact()) {
-            log.info("Отсутствует сообщение от userID:{}, chatId: {}, с текстом: {}", message.getFrom().getUserName(), message.getChatId(), message.getText());
+            log.trace("Пользователь поделился контактами");
             return replayMessageService.getReplyMessageFromSource(message.getChatId(), "error.empty.message");
         }
 
-        log.info("Новое сообщение от User:{}, chatId: {}, с текстом: {}", message.getFrom().getId(), message.getChatId(), message.getText());
-
+        log.trace("Начало обработки message с текстом: {}", message.getText());
         return handleInputMessage(message);
     }
 
     /**
      * Метод обработки кнопок
      *
-     * @param callbackQuery
+     * @param callbackQuery контейнер с идентификаторами запроса
      * @return сообщение или кнопки
      */
     private BotApiMethod<?> processInputCallbackQuery(CallbackQuery callbackQuery) {
@@ -60,6 +59,7 @@ public abstract class AbstractTgBotHandler {
             BotState botState = botStateService.getUserBotStateByTgId(userId).getBotState();
             return botStateContext.processInputCallbackQuery(botState, callbackQuery);
         } catch (Exception ex) {
+            log.error("Произошла ошибка.", ex);
             return replayMessageService.getReplyMessageFromSource(chatId, "error.unknown");
         }
     }
@@ -67,8 +67,8 @@ public abstract class AbstractTgBotHandler {
     /**
      * Метод обработки сообщений
      *
-     * @param message
-     * @return
+     * @param message контейнер с идентификаторами запроса
+     * @return сообщение или кнопки
      */
     protected abstract SendMessage handleInputMessage(Message message);
 

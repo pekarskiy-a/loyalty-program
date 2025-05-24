@@ -46,8 +46,7 @@ public class LoyaltyProgramFacadeImpl implements LoyaltyProgramFacade {
     @Override
     @Transactional
     public LoyaltyProgram findById(String id) {
-        var rqUid = UUID.randomUUID();
-        log.info("[rqUid {}] Поиск программы лояльности по id - {}.", rqUid, id);
+        log.info("Поиск программы лояльности по id - {}.", id);
         return lpService.findById(id);
     }
 

@@ -1,5 +1,6 @@
 package ru.sevbereg.loyaltyprogra.tgbotapi.handler.message.employee;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.sevbereg.loyaltyprogra.controller.api.TransactionCreateRq;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.BotState;
@@ -10,6 +11,7 @@ import ru.sevbereg.loyaltyprogra.service.tgbot.UserBotStateService;
 
 import java.math.BigDecimal;
 
+@Slf4j
 @Component
 public class AddBalanceMessageHandler extends UpdateBalanceMessageHandler {
 
@@ -17,7 +19,7 @@ public class AddBalanceMessageHandler extends UpdateBalanceMessageHandler {
                                     EmployeeTgBotFacade employeeFacade,
                                     TransactionFacade transactionFacade,
                                     ReplyMessageService replyMessageService) {
-        super(botStateService, employeeFacade, transactionFacade, replyMessageService);
+        super(botStateService, employeeFacade, transactionFacade, replyMessageService, log);
     }
 
     @Override

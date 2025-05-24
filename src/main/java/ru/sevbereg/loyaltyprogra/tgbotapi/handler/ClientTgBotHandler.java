@@ -26,14 +26,14 @@ public class ClientTgBotHandler extends AbstractTgBotHandler {
     public ClientTgBotHandler(BotStateContext botStateContext,
                               UserBotStateService botStateService,
                               ReplyMessageService replayMessageService) {
-        super(botStateContext, botStateService, replayMessageService);
+        super(botStateContext, botStateService, replayMessageService, log);
     }
 
     /**
      * Метод обработки сообщений
      *
-     * @param message
-     * @return
+     * @param message контейнер с идентификаторами запроса
+     * @return ответ пользователю
      */
     @Override
     protected SendMessage handleInputMessage(Message message) {
@@ -47,7 +47,6 @@ public class ClientTgBotHandler extends AbstractTgBotHandler {
                 return botStateContext.processInputMessage(ENTER_PHONE_NUMBER, message);
             }
 
-            //todo можно попробовать добавить переключение состояний в зависимости от роли
             BotState botState = switch (inputMessage) {
                 case "/start" -> botStateService.createIfNoExist(userId, chatId, ASK_PHONE_NUMBER, Role.CLIENT).getBotState();
                 case "Информация о карте" -> ASK_CARD_INFO;

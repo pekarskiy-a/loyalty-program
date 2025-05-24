@@ -31,6 +31,8 @@ public class LpInfoMessageHandler extends AbstractInputMessageHandler {
 
     @Override
     public SendMessage handle(Message message) {
+        log.trace("CLIENT. Обработка запроса информации о программе лояльности");
+
         LoyaltyProgram loyaltyProgram = loyaltyProgramFacade.findById(defaultLoyaltyTierId.toString());
         List<LoyaltyTier> tiers = loyaltyProgram.getTiers().stream()
                 .sorted(Comparator.comparingLong(LoyaltyTier::getId))

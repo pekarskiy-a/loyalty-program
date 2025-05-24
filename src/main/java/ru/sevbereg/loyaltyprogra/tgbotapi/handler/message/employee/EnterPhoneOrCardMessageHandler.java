@@ -1,6 +1,7 @@
 package ru.sevbereg.loyaltyprogra.tgbotapi.handler.message.employee;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -22,6 +23,7 @@ import java.util.Objects;
 
 import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.ENTER_PHONE_OR_CARD_ID;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class EnterPhoneOrCardMessageHandler implements InputMessageHandler {
@@ -38,6 +40,7 @@ public class EnterPhoneOrCardMessageHandler implements InputMessageHandler {
         Long chatId = message.getChatId();
         String userAnswer = message.getText();
 
+        log.trace("EMPLOYEE. Обработка запроса на получение информации о карте клиента");
         Client client = clientFacade.findByPhoneOrCardNumber(userAnswer);
 
         if (Objects.isNull(client)) {
