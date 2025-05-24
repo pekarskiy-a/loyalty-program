@@ -22,5 +22,6 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     @Query(value = "SELECT client FROM Client client LEFT JOIN FETCH client.cards WHERE client.phoneNumber = ?1")
     Client findByPhoneNumber(String id);
 
+    @Query("SELECT client FROM Client client LEFT JOIN FETCH client.botState state WHERE state.tgUserId = ?1")
     Client findByBotState_TgUserId(Long tgUserId);
 }

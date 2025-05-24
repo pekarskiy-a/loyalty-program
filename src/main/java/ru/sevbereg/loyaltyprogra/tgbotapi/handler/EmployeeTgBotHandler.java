@@ -38,7 +38,7 @@ public class EmployeeTgBotHandler extends AbstractTgBotHandler {
                 case "Информация о клиенте",
                         "Начислить/списать баллы",
                         "Отметить не заезд" -> ASK_CLIENT_CARD;
-                default -> Optional.ofNullable(botStateService.getUserBotStateByTgId(userId)) //todo добавить кейс с информацией, что бот не умеет работать с другим текстом
+                default -> Optional.ofNullable(botStateService.getUserBotStateByTgId(userId))
                         .map(UserBotState::getBotState)
                         .orElse(SHOW_MAIN_MENU);
             };

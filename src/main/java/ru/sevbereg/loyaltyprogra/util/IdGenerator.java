@@ -5,9 +5,10 @@ import lombok.experimental.UtilityClass;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.zip.CRC32;
 
 @UtilityClass
-public class IdempotencyKeyUtils {
+public class IdGenerator {
 
     /**
      * Генерация хэша (сохранил пока тут, чтобы не потерять)
@@ -31,5 +32,11 @@ public class IdempotencyKeyUtils {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Error generating hash", e);
         }
+    }
+
+    public long generateCardNumber(String phoneNumber) {
+        CRC32 crc = new CRC32();
+        crc.update(phoneNumber.getBytes());
+        return crc.getValue();
     }
 }

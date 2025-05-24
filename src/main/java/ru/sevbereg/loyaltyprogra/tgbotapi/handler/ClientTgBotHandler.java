@@ -51,7 +51,7 @@ public class ClientTgBotHandler extends AbstractTgBotHandler {
                 case "/start" -> botStateService.createIfNoExist(userId, chatId, ASK_PHONE_NUMBER, Role.CLIENT).getBotState();
                 case "Информация о карте" -> ASK_CARD_INFO;
                 case "Информация о программе лояльности" -> ASK_LP_INFO;
-                default -> Optional.ofNullable(botStateService.getUserBotStateByTgId(userId)) //todo добавить кейс с информацией, что бот не умеет работать с другим текстом
+                default -> Optional.ofNullable(botStateService.getUserBotStateByTgId(userId))
                         .map(UserBotState::getBotState)
                         .orElse(ASK_PHONE_NUMBER);
             };

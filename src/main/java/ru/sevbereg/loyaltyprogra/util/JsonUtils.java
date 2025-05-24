@@ -15,7 +15,8 @@ public class JsonUtils {
 
     public static String toJson(Object obj) {
         try {
-            return mapper.writeValueAsString(obj);
+            return mapper.writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Failed to convert object to JSON", e);
         }

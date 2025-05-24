@@ -22,12 +22,6 @@ public class AbstractMutableEntity extends AbstractIdentifiableEntity {
     @Column(name = "c_entity_version")
     private Long version;
 
-//    /**
-//     * Уникальный id сущности (заполняется при сохранении объекта в БД)
-//     */
-//    @Column(name = "c_sbid")
-//    private String sbId;
-
     @Column(name = "c_update_date")
     private Instant updateDate;
 

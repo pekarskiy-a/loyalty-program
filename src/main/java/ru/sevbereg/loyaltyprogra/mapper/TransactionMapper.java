@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import ru.sevbereg.loyaltyprogra.controller.api.TransactionCreateRq;
 import ru.sevbereg.loyaltyprogra.domain.Transaction;
-import ru.sevbereg.loyaltyprogra.util.IdempotencyKeyUtils;
+import ru.sevbereg.loyaltyprogra.util.IdGenerator;
 
 import java.time.LocalDate;
 
@@ -29,6 +29,6 @@ public interface TransactionMapper {
                 request.getEmployeeId(), request.getCardId(), request.getDescription(),
                 request.getAmountSpent(), request.getBonusEarned(), request.getBonusSpent(), LocalDate.now());
 
-        return IdempotencyKeyUtils.generateIdempotencyKey(rowString);
+        return IdGenerator.generateIdempotencyKey(rowString);
     }
 }

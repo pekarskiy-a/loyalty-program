@@ -19,5 +19,4 @@ public class WebHookClientController {
         return loyaltyProgramBot.onWebhookUpdateReceived(update);
     }
 
-    //todo реализовать метод Get для получения инфо по карте
 }

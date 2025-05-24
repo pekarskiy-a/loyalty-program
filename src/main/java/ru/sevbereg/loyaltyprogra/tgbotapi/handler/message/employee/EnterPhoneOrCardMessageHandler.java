@@ -60,7 +60,7 @@ public class EnterPhoneOrCardMessageHandler implements InputMessageHandler {
         stringBuilder.append("Без предоплаты: %s\n".formatted(card.isAvailableBooking()));
         stringBuilder.append("Кол-во незаездов: %s\n".formatted(card.getSumCancelledCheckIn()));
 
-        botStateService.updateEmployeeState(tgUserId, BotState.CLIENT_INFO_BUTTONS, card.getId()); //todo может возникнуть уязвимость при вводе без нажатия кнопки
+        botStateService.updateEmployeeState(tgUserId, BotState.CLIENT_INFO_BUTTONS, card.getId());
         SendMessage replyMessage = messageService.getReplyMessage(chatId, stringBuilder.toString());
         replyMessage.setReplyMarkup(getMessageButtons());
         return replyMessage;

@@ -17,6 +17,7 @@ import ru.sevbereg.loyaltyprogra.service.ClientService;
 import ru.sevbereg.loyaltyprogra.service.LoyaltyTierService;
 import ru.sevbereg.loyaltyprogra.service.tgbot.UserBotStateService;
 import ru.sevbereg.loyaltyprogra.tgbotapi.api.UpdateClientTemplate;
+import ru.sevbereg.loyaltyprogra.util.IdGenerator;
 import ru.sevbereg.loyaltyprogra.util.JsonUtils;
 import ru.sevbereg.loyaltyprogra.util.PhoneFormatterUtils;
 
@@ -24,7 +25,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.zip.CRC32;
 
 @Slf4j
 @Service
@@ -54,7 +54,7 @@ public class ClientTgBotFacade {
         Card card = new Card();
         card.setLoyaltyTier(loyaltyTier);
         card.setAvailableBooking(loyaltyTier.isAvailableBooking());
-        card.setCardNumber(this.generateCardNumber(formattedPhoneNumber));
+        card.setCardNumber(IdGenerator.generateCardNumber(formattedPhoneNumber));
 
         Set<Card> cards = new HashSet<>();
         cards.add(card);
@@ -112,9 +112,5 @@ public class ClientTgBotFacade {
         }
     }
 
-    private long generateCardNumber(String phoneNumber) { // todo вынести в утилитку
-        CRC32 crc = new CRC32();
-        crc.update(phoneNumber.getBytes());
-        return crc.getValue();
-    }
+
 }

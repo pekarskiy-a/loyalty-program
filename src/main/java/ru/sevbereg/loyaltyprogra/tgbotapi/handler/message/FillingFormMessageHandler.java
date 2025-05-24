@@ -84,7 +84,7 @@ public class FillingFormMessageHandler extends AbstractInputMessageHandler {
                     return messageService.getReplyMessageFromSource(chatId, "replay.form.birthdate.error");
                 }
             }
-            case ASK_SEX -> { //todo не используется, обрабатывается кнопкой
+            case ASK_SEX -> { //не используется, обрабатывается кнопкой
                 try {
                     clientFacade.updateClientTemplate(UpdateClientTemplate.builder().tgUserId(tgUserId).sex(userAnswer).build());
                     botStateService.updateClientState(tgUserId, BotState.ASK_EMAIL);

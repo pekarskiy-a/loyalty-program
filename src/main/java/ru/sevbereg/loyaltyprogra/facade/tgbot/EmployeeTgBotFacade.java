@@ -15,7 +15,7 @@ public class EmployeeTgBotFacade {
 
     private final EmployeeService employeeService;
 
-    public Employee findByTgUserId(Long tgUserId) { //todo проверить что возвращает null или exception
+    public Employee findByTgUserId(Long tgUserId) {
         log.trace("Поиск сотрудника по идентификатору tgUserId");
         return employeeService.findByTgUserId(tgUserId);
     }
