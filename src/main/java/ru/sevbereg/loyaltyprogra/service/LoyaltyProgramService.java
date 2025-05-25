@@ -8,6 +8,8 @@ public interface LoyaltyProgramService {
 
     List<LoyaltyProgram> findAll();
 
+    List<LoyaltyProgram> findAllActive();
+
     LoyaltyProgram findById(String id);
 
     LoyaltyProgram findByLpName(String lpName);

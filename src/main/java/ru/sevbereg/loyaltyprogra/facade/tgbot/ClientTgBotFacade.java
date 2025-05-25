@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sevbereg.loyaltyprogra.domain.Card;
@@ -42,13 +41,10 @@ public class ClientTgBotFacade {
 
     private final UserBotStateService botStateService;
 
-    @Value("${default.loyalty.tier.id}")
-    private Long defaultLoyaltyTierId;
-
     public Client createTemplate(String phoneNumber, Long tgUserId) {
         log.info("Создание шаблона клиента");
         String formattedPhoneNumber = PhoneFormatterUtils.normalizeRuPhone(phoneNumber);
-        LoyaltyTier loyaltyTier = loyaltyTierService.findById(defaultLoyaltyTierId);
+        LoyaltyTier loyaltyTier = loyaltyTierService.findAllActiveOrderByNextValueAsc().get(0);
         UserBotState currentUserBotState = botStateService.getUserBotStateByTgId(tgUserId);
 
         Card card = new Card();

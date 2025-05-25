@@ -1,14 +1,13 @@
 package ru.sevbereg.loyaltyprogra.tgbotapi.handler.message;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.sevbereg.loyaltyprogra.domain.LoyaltyProgram;
 import ru.sevbereg.loyaltyprogra.domain.LoyaltyTier;
 import ru.sevbereg.loyaltyprogra.domain.tgbot.BotState;
-import ru.sevbereg.loyaltyprogra.facade.LoyaltyProgramFacade;
+import ru.sevbereg.loyaltyprogra.service.LoyaltyProgramService;
 import ru.sevbereg.loyaltyprogra.service.tgbot.ReplyMessageService;
 import ru.sevbereg.loyaltyprogra.service.tgbot.UserBotStateService;
 
@@ -19,21 +18,18 @@ import java.util.List;
 @Component
 public class LpInfoMessageHandler extends AbstractInputMessageHandler {
 
-    private final LoyaltyProgramFacade loyaltyProgramFacade;
+    private final LoyaltyProgramService loyaltyProgramService;
 
-    @Value("${default.loyalty.program.id}")
-    private Long defaultLoyaltyTierId;
-
-    public LpInfoMessageHandler(UserBotStateService botStateService, ReplyMessageService messageService, LoyaltyProgramFacade loyaltyProgramFacade) {
+    public LpInfoMessageHandler(UserBotStateService botStateService, ReplyMessageService messageService, LoyaltyProgramService loyaltyProgramService) {
         super(botStateService, messageService);
-        this.loyaltyProgramFacade = loyaltyProgramFacade;
+        this.loyaltyProgramService = loyaltyProgramService;
     }
 
     @Override
     public SendMessage handle(Message message) {
         log.trace("CLIENT. Обработка запроса информации о программе лояльности");
 
-        LoyaltyProgram loyaltyProgram = loyaltyProgramFacade.findById(defaultLoyaltyTierId.toString());
+        LoyaltyProgram loyaltyProgram = loyaltyProgramService.findAllActive().get(0);
         List<LoyaltyTier> tiers = loyaltyProgram.getTiers().stream()
                 .sorted(Comparator.comparingLong(LoyaltyTier::getId))
                 .toList();

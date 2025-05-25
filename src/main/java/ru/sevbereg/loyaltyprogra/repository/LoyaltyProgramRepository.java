@@ -11,6 +11,9 @@ public interface LoyaltyProgramRepository extends JpaRepository<LoyaltyProgram, 
     @Query(value = "SELECT loyaltyProgram FROM LoyaltyProgram loyaltyProgram LEFT JOIN FETCH loyaltyProgram.tiers")
     List<LoyaltyProgram> findAll();
 
+    @Query(value = "SELECT loyaltyProgram FROM LoyaltyProgram loyaltyProgram LEFT JOIN FETCH loyaltyProgram.tiers WHERE loyaltyProgram.isActive = true")
+    List<LoyaltyProgram> findAllActive();
+
     @Query(value = "SELECT loyaltyProgram FROM LoyaltyProgram loyaltyProgram LEFT JOIN FETCH loyaltyProgram.tiers WHERE loyaltyProgram.id = ?1")
     LoyaltyProgram findById(String id);
 

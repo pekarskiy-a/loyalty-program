@@ -20,6 +20,11 @@ public class LoyaltyProgramServiceImpl implements LoyaltyProgramService {
     }
 
     @Override
+    public List<LoyaltyProgram> findAllActive() {
+        return repository.findAllActive();
+    }
+
+    @Override
     public LoyaltyProgram findById(String id) {
         return repository.findById(id);
     }
