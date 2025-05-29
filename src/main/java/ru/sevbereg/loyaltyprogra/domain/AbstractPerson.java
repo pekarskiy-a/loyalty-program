@@ -25,9 +25,6 @@ public class AbstractPerson extends AbstractMutableEntity {
     @Column(name = "c_phone_number", nullable = false, unique = true)
     private String phoneNumber;
 
-    @Column(name = "c_telegram", unique = true)
-    private String telegram;
-
     @Email
     @Column(name = "c_email", unique = true)
     private String email;

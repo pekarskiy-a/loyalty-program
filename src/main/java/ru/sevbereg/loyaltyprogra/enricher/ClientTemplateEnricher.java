@@ -13,7 +13,6 @@ public class ClientTemplateEnricher {
 
     public Client enrich(Client source, UpdateClientTemplate target) {
         setIfPresent(target.getPhoneNumber(), source::setPhoneNumber);
-        setIfPresent(target.getTelegram(), source::setTelegram);
         setIfPresent(target.getEmail(), source::setEmail);
         Sex sex = Optional.ofNullable(target.getSex())
                 .map(Sex::valueOf)
