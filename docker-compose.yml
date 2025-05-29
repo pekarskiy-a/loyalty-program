@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  loyalty-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile_LP
+    container_name: loyalty-program-bot
+    ports:
+      - "8080:8080"      # Проброс порта приложения
+      - "5005:5005"      # Для отладки через JDWP
+    environment:
+      TELEGRAM_BOT_TOKEN: 7933648567:AAFUAuJhCGEaUuVlgI2yStqiWk_hQvWcmck
+      TELEGRAM_BOT_USERNAME: SevBeregLoyaltyBot
+      TELEGRAM_BOT_PATH: https://6635-89-31-121-110.ngrok-free.app
+
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/loyaltydb
+      SPRING_DATASOURCE_USERNAME: loyaltyuser
+      SPRING_DATASOURCE_PASSWORD: loyaltypass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15
+    container_name: loyalty-postgres
+    environment:
+      POSTGRES_DB: loyaltydb
+      POSTGRES_USER: loyaltyuser
+      POSTGRES_PASSWORD: loyaltypass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+
+volumes:
+  postgres_data:
