@@ -31,3 +31,20 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Логи
+*.log
+
+# Секреты
+.env
+application-prod.properties
+*.key
+*.pem
+
+# Операционная система
+.DS_Store       # macOS
+
+# Docker
+*.pid
+*.tar
+docker-compose.yml
