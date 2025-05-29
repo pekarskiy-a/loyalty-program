@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="init_lp" author="Pekarskiy_A" failOnError="true">
+        <preConditions onFail="WARN">
+            <tableExists tableName="t_loyalty_program"/>
+        </preConditions>
+        <insert tableName="t_loyalty_program">
+            <column name="c_is_active" valueBoolean="true"/>
+            <column name="c_lp_name" value="Членство Загородного Клуба"/>
+            <column name="c_description">
+                <![CDATA[
+🔱 Программа лояльности для полноправных членов клуба
+
+🌿 Действует на проекты:
+1. Клуб загородного отдыха "Северный Берег"
+2. Клуб загородного отдыха "Курголовский Берег"
+3. Центр активного отдыха "Изумрудное Озеро"
+
+💰 Как получать бонусы:
+• Возврат 100% от стоимости аренды в бонусных рублях
+• Действует на коттеджи, беседки и бани
+
+🎯 Условия использования:
+• Скидка применяется при оплате аренды
+• Карта именная (только для держателя)
+• Бонусы не действуют 30.12-02.01 и праздничные дни
+• При 2 неявках без предоплаты - блокировка опции
+• Максимальная скидка из доступных (не суммируется)
+
+❗ Ограничения:
+• Только для аренды коттеджей, бань и беседок
+• Не сочетается с другими акциями
+            ]]>
+            </column>
+            <column name="c_start_date" valueDate="2025-03-30"/>
+            <column name="c_entity_version" valueNumeric="0"/>
+            <column name="c_creat_date" valueDate="2025-05-29 18:47:06.815467"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="init_tiers_juniper" author="Pekarskiy_A" failOnError="true">
+        <preConditions onFail="WARN">
+            <tableExists tableName="t_loyalty_tier"/>
+        </preConditions>
+        <insert tableName="t_loyalty_tier">
+            <column name="c_is_active" valueBoolean="true"/>
+            <column name="c_loyalty_program_id" valueNumeric="1"/>
+            <column name="c_tier_name" value="Можжевельник"/>
+            <column name="c_discount_percent" valueNumeric="5"/>
+            <column name="c_next_level_value" valueNumeric="60000.00"/>
+            <column name="c_benefit" value="1. Скидка на проживание 5%;
+2. За неделю до и после Дня Рождения скидка 15%"/>
+            <column name="c_is_available_booking" valueBoolean="false"/>
+            <column name="c_entity_version" valueNumeric="0"/>
+            <column name="c_creat_date" valueDate="2025-05-29 18:47:06.815467"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="init_tiers_pine" author="Pekarskiy_A" failOnError="true">
+        <preConditions onFail="WARN">
+            <tableExists tableName="t_loyalty_tier"/>
+        </preConditions>
+        <insert tableName="t_loyalty_tier">
+            <column name="c_is_active" valueBoolean="true"/>
+            <column name="c_loyalty_program_id" valueNumeric="1"/>
+            <column name="c_tier_name" value="Сосна"/>
+            <column name="c_discount_percent" valueNumeric="7"/>
+            <column name="c_next_level_value" valueNumeric="140000.00"/>
+            <column name="c_benefit" value="1. Скидка на проживание 7%;
+2. За неделю до и после Дня Рождения скидка 15%;
+3. Бронирование без предоплаты"/>
+            <column name="c_is_available_booking" valueBoolean="true"/>
+            <column name="c_entity_version" valueNumeric="0"/>
+            <column name="c_creat_date" valueDate="2025-05-29 18:47:06.815467"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="init_tiers_cedar" author="Pekarskiy_A" failOnError="true">
+        <preConditions onFail="WARN">
+            <tableExists tableName="t_loyalty_tier"/>
+        </preConditions>
+        <insert tableName="t_loyalty_tier">
+            <column name="c_is_active" valueBoolean="true"/>
+            <column name="c_loyalty_program_id" valueNumeric="1"/>
+            <column name="c_tier_name" value="Кедр"/>
+            <column name="c_discount_percent" valueNumeric="10"/>
+            <column name="c_next_level_value" valueNumeric="200000.00"/>
+            <column name="c_benefit" value="1. Скидка на проживание 10%;
+2. За неделю до и после Дня Рождения скидка 15%;
+3. Бронирование без предоплаты
+4. Сутки в любом домике в будний день бесплатно, а при достижении 200 000 бонусных рублей сутки в выходные дни."/>
+            <column name="c_is_available_booking" valueBoolean="true"/>
+            <column name="c_entity_version" valueNumeric="0"/>
+            <column name="c_creat_date" valueDate="2025-05-29 18:47:06.815467"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

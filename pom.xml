@@ -40,6 +40,7 @@
         <libphonenumber.version>9.0.2</libphonenumber.version>
         <telegrambots-spring-boot-starter.version>6.9.7.1</telegrambots-spring-boot-starter.version>
         <emoji-java.version>5.1.1</emoji-java.version>
+        <org.postgresql.version>42.7.3</org.postgresql.version>
     </properties>
 
     <dependencies>
@@ -57,9 +58,13 @@
         </dependency>
 
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${org.postgresql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -144,6 +149,13 @@
                         -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
                         -Xshare:off
                     </argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <configuration>
+                    <propertyFile>src/main/resources/liquibase/liquibase.properties</propertyFile>
                 </configuration>
             </plugin>
         </plugins>
