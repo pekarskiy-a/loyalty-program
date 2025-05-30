@@ -28,7 +28,7 @@
     </parent>
     <groupId>ru.sevbereg</groupId>
     <artifactId>loyalty-program</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>loyalty-program</name>
     <description>loyalty-program</description>
 
