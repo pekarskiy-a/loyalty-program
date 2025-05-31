@@ -4,7 +4,7 @@ services:
   loyalty-bot:
     build:
       context: .
-      dockerfile: Dockerfile_LP
+      dockerfile: Dockerfile
     container_name: loyalty-program-bot
     ports:
       - "8080:8080"

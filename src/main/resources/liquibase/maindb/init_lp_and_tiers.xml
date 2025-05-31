@@ -6,7 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet id="init_lp" author="Pekarskiy_A" failOnError="true">
-        <preConditions onFail="MARK_RAN">
+        <preConditions onFail="WARN">
             <tableExists tableName="t_loyalty_program"/>
         </preConditions>
         <insert tableName="t_loyalty_program">
@@ -44,7 +44,7 @@
     </changeSet>
 
     <changeSet id="init_tiers_juniper" author="Pekarskiy_A" failOnError="true">
-        <preConditions onFail="MARK_RAN">
+        <preConditions onFail="WARN">
             <tableExists tableName="t_loyalty_tier"/>
         </preConditions>
         <insert tableName="t_loyalty_tier">
@@ -62,7 +62,7 @@
     </changeSet>
 
     <changeSet id="init_tiers_pine" author="Pekarskiy_A" failOnError="true">
-        <preConditions onFail="MARK_RAN">
+        <preConditions onFail="WARN">
             <tableExists tableName="t_loyalty_tier"/>
         </preConditions>
         <insert tableName="t_loyalty_tier">
@@ -81,7 +81,7 @@
     </changeSet>
 
     <changeSet id="init_tiers_cedar" author="Pekarskiy_A" failOnError="true">
-        <preConditions onFail="MARK_RAN">
+        <preConditions onFail="WARN">
             <tableExists tableName="t_loyalty_tier"/>
         </preConditions>
         <insert tableName="t_loyalty_tier">
