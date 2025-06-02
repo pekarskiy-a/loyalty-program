@@ -3,8 +3,7 @@ package ru.sevbereg.loyaltyprogra.tgbotapi;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.bots.TelegramWebhookBot;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -21,11 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
-@Component
-public class LoyaltyProgramBot extends TelegramWebhookBot {
-
-    @Value("telegram.bot.path")
-    private String botPath;
+public class LoyaltyProgramBot extends TelegramLongPollingBot {
 
     @Value("telegram.bot.username")
     private String botUsername;
@@ -34,7 +29,10 @@ public class LoyaltyProgramBot extends TelegramWebhookBot {
     private final ClientTgBotHandler clientHandler;
     private final EmployeeTgBotHandler employeeHandler;
 
-    public LoyaltyProgramBot(@Value("telegram.bot.token") String botToken, EmployeeTgBotFacade employeeFacade, ClientTgBotHandler clientHandler, EmployeeTgBotHandler employeeHandler) {
+    public LoyaltyProgramBot(String botToken,
+                             EmployeeTgBotFacade employeeFacade,
+                             ClientTgBotHandler clientHandler,
+                             EmployeeTgBotHandler employeeHandler) {
         super(botToken);
         this.employeeFacade = employeeFacade;
         this.clientHandler = clientHandler;
@@ -42,7 +40,7 @@ public class LoyaltyProgramBot extends TelegramWebhookBot {
     }
 
     @Override
-    public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
+    public void onUpdateReceived(Update update) {
         String rqUid = UUID.randomUUID().toString();
         Long tgUserId = this.getTgUserId(update);
 
@@ -56,17 +54,26 @@ public class LoyaltyProgramBot extends TelegramWebhookBot {
                     log.info("Получено сообщение от сотрудника");
                     BotApiMethod<?> message = employeeHandler.handleUpdate(update);
                     log.debug("Сообщение отправлено: {}{}", System.lineSeparator(), JsonUtils.toJson(message));
-                    return message;
+                    sendMessage(message);
+                    return;
                 }
             }
 
             log.info("Получено сообщение от клиента");
             log.debug("Сообщение от клиента: {}{}", System.lineSeparator(), JsonUtils.toJson(update));
             BotApiMethod<?> message = clientHandler.handleUpdate(update);
-            log.debug("Сообщение отправлено: {}{}", System.lineSeparator(), JsonUtils.toJson(message));
-            return message;
+            sendMessage(message);
         } finally {
             MDC.clear();
+        }
+    }
+
+    private void sendMessage(BotApiMethod<?> message) {
+        try {
+            log.debug("Сообщение отправлено: {}{}", System.lineSeparator(), JsonUtils.toJson(message));
+            execute(message);
+        } catch (Exception e) {
+            log.error("Ошибка при отправке сообщения", e);
         }
     }
 
@@ -90,11 +97,6 @@ public class LoyaltyProgramBot extends TelegramWebhookBot {
     @Override
     public String getBotUsername() {
         return botUsername;
-    }
-
-    @Override
-    public String getBotPath() {
-        return botPath;
     }
 
 }
