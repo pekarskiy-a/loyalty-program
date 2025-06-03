@@ -34,11 +34,12 @@ public class ClientBotConfig {
     @Bean
     public LoyaltyProgramBot loyaltyProgramBot(
             @Value("${telegram.bot.token}") String token,
+            @Value("${telegram.bot.username}") String username,
             EmployeeTgBotFacade employeeFacade,
             ClientTgBotHandler clientHandler,
             EmployeeTgBotHandler employeeHandler
     ) {
-        return new LoyaltyProgramBot(token, employeeFacade, clientHandler, employeeHandler);
+        return new LoyaltyProgramBot(token, username, employeeFacade, clientHandler, employeeHandler);
     }
 
 }

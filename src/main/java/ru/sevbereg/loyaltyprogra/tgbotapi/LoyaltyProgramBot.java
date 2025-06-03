@@ -2,7 +2,6 @@ package ru.sevbereg.loyaltyprogra.tgbotapi;
 
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Value;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -22,18 +21,19 @@ import java.util.UUID;
 @Slf4j
 public class LoyaltyProgramBot extends TelegramLongPollingBot {
 
-    @Value("telegram.bot.username")
-    private String botUsername;
 
+    private final String botUsername;
     private final EmployeeTgBotFacade employeeFacade;
     private final ClientTgBotHandler clientHandler;
     private final EmployeeTgBotHandler employeeHandler;
 
     public LoyaltyProgramBot(String botToken,
+                             String botUsername,
                              EmployeeTgBotFacade employeeFacade,
                              ClientTgBotHandler clientHandler,
                              EmployeeTgBotHandler employeeHandler) {
         super(botToken);
+        this.botUsername = botUsername;
         this.employeeFacade = employeeFacade;
         this.clientHandler = clientHandler;
         this.employeeHandler = employeeHandler;
