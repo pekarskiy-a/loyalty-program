@@ -57,7 +57,13 @@ public class EnterPhoneOrCardMessageHandler implements InputMessageHandler {
         stringBuilder.append("Телефон: %s\n".formatted(client.getPhoneNumber()));
         stringBuilder.append("Номер карты: %s\n".formatted(card.getCardNumber()));
         stringBuilder.append("Баланс: %s\n".formatted(card.getBonusBalance()));
-        stringBuilder.append("Без предоплаты: %s\n".formatted(card.isAvailableBooking()));
+        String availableBooking;
+        if (card.isAvailableBooking()) {
+            availableBooking = "Да";
+        } else {
+            availableBooking = "Нет";
+        }
+        stringBuilder.append("Без предоплаты: %s\n".formatted(availableBooking));
         stringBuilder.append("Кол-во незаездов: %s\n".formatted(card.getSumCancelledCheckIn()));
 
         botStateService.updateEmployeeState(tgUserId, BotState.CLIENT_INFO_BUTTONS, card.getId());

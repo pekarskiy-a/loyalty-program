@@ -8,6 +8,6 @@
     <!-- изменение схемы DDL -->
 
     <!-- изменение данных в таблице -->
-    <include file="maindb/init_lp_and_tiers.xml" relativeToChangelogFile="true"/>
+    <!--    <include file="maindb/init_lp_and_tiers.xml" relativeToChangelogFile="true"/>-->
 
 </databaseChangeLog>

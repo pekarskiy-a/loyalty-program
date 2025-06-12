@@ -15,8 +15,9 @@
 1. Регистрация осуществляется SQL скриптом, после подключения к поду идет проверка по роли и если такой сотрудник есть, тогда у него будет меню с полномочиями
    администратора
 2. Получение информации о клиенте
-3. Изменение баланса клиента
-4. Отметка о не заезде
+3. Изменение баланса клиента (установлен ключ идемпотентности, доки в сервисе)
+4. Отметка о не заезде (в случае достижения кол-во по отмене бронь без предоплаты снимается).
+   При начислении баллов счетчик обнуляется)
 
 ### Для администратора
 
@@ -41,4 +42,42 @@
 
 Приложение разворачивается на сервере в контейнере докер через **docker-compose.yml**. <br>
 БД разворачивается на сервере **timeweb**
-Секреты хранятся в файле .env
+Секреты хранятся в файле **.env**
+
+#### Первый запуск
+
+1. Удалять **docker volume** логов приложения, поскольку из-за него подтягивается старый образ и сборка.
+2. **НЕЛЬЗЯ** удалять **volume БД**, это приведет к потере данных вслучае удаления контейнера.
+3. На текущий момент есть проблема того, что при первком запуске скрипты отрабатывают раньше DDL Hibernate,
+   что приводит к ошибке, поэтому сперва отключаем lb script (можно закоментить).</br>
+   **Полезные скрипты**</br>
+
+```bash
+   cd loyalty-program # переход к папке
+   nano .env  # редактирование файла
+   docker-compose down # останавливает и удялет контейнер
+   docker image rm loyalty-program-loyalty-bot
+   docker images # проверяем все ли images нужные нам удалены
+   docker volume ls # посмотреть активные тома
+   docker volume rm loyalty-program_loyalty_logs # удалить выбранный том
+   docker-compose build --no-cache
+   docker-compose up
+```
+
+#### Получение логов
+
+```bash
+   docker exec -it loyalty-program-bot ls /app/logs
+   docker exec -it loyalty-program-bot cat /app/logs/<имя_файла_лога>
+   docker exec -it loyalty-program-bot tail -f /app/logs/<имя_файла_лога>
+   # Копирование
+   docker cp loyalty-program-bot:/app/logs/application-2025-06-03.log /tmp/application-2025-06-03.log # копируем на хост
+   scp root@188.225.9.102:/tmp/application-2025-06-03.log ./application-2025-06-03.log # копируем на локальный ПК
+```
+
+The authenticity of host '188.225.9.102 (188.225.9.102)' can't be established.
+ED25519 key fingerprint is SHA256:1hT+MMa8CA0XR1OfngNGEa8BrvD+jKNqD2dX69mP7KY.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '188.225.9.102' (ED25519) to the list of known hosts.
+root@188.225.9.102's password: 

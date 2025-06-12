@@ -3,6 +3,7 @@ package ru.sevbereg.loyaltyprogra.tgbotapi.handler.message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Contact;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import ru.sevbereg.loyaltyprogra.domain.Client;
@@ -14,6 +15,7 @@ import ru.sevbereg.loyaltyprogra.service.tgbot.UserBotStateService;
 import ru.sevbereg.loyaltyprogra.util.PhoneFormatterUtils;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -36,12 +38,20 @@ public class EnterPhoneNumberMessageHandler extends AbstractInputMessageHandler 
         Long chatId = message.getChatId();
 
         log.trace("CLIENT. Обработка номера клиента");
-        String clientPhoneNumber = PhoneFormatterUtils.normalizeRuPhone(message.getContact().getPhoneNumber());
-        Client client = clientFacade.findByPhoneNumber(clientPhoneNumber);
+        String phoneNumber = Optional.ofNullable(message)
+                .map(Message::getContact)
+                .map(Contact::getPhoneNumber)
+                .orElse(null);
+
+        if (Objects.isNull(phoneNumber) || phoneNumber.isEmpty()) {
+            return messageService.getReplyMessageFromSource(chatId, "replay.client.noPhoneNumber");
+        }
+        String normalizeRuPhone = PhoneFormatterUtils.normalizeRuPhone(phoneNumber);
+        Client client = clientFacade.findByPhoneNumber(normalizeRuPhone);
 
         if (Objects.isNull(client)) {
-            log.trace("CLIENT. Клиент с номером: {} уже существует", clientPhoneNumber);
-            return createNewClient(clientPhoneNumber, tgUserId, chatId);
+            log.trace("CLIENT. Клиент с номером: {} уже существует", normalizeRuPhone);
+            return createNewClient(normalizeRuPhone, tgUserId, chatId);
         }
 
         botStateService.updateClientState(tgUserId, BotState.CARD_FOUND);

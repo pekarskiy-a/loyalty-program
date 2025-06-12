@@ -34,16 +34,18 @@ public class EmployeeTgBotHandler extends AbstractTgBotHandler {
 
         try {
             BotState botState = switch (inputMessage) {
-                case "/start" -> botStateService.createIfNoExist(userId, chatId, SHOW_MAIN_MENU, Role.EMPLOYEE).getBotState();
+                case "/start" ->
+                        botStateService.createIfNoExist(userId, chatId, SHOW_MAIN_MENU, Role.EMPLOYEE).getBotState();
                 case "Информация о клиенте",
-                        "Начислить/списать баллы",
-                        "Отметить не заезд" -> ASK_CLIENT_CARD;
+                     "Начислить/списать баллы",
+                     "Отметить не заезд" -> ASK_CLIENT_CARD;
                 default -> Optional.ofNullable(botStateService.getUserBotStateByTgId(userId))
                         .map(UserBotState::getBotState)
                         .orElse(SHOW_MAIN_MENU);
             };
             return botStateContext.processInputMessage(botState, message);
         } catch (Exception ex) {
+            log.error("Произошла ошибка.", ex);
             return replayMessageService.getReplyMessageFromSource(chatId, "error.unknown");
         }
     }

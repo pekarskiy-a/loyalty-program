@@ -6,13 +6,29 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: loyalty-program-bot
+    restart: always
     ports:
       - "8443:8080"
       - "5005:5005"
     env_file:
       - .env
     volumes:
-      - loyalty_logs:/app  # Монтируем каталог логов
+      - loyalty_logs:/app/logs
+    depends_on:
+      - postgres
 
+  postgres:
+    image: postgres:15
+    container_name: loyalty-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${SPRING_DATASOURCE_DB}
+      POSTGRES_USER: ${SPRING_DATASOURCE_USERNAME}
+      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
 volumes:
   loyalty_logs:
+  postgres_data:

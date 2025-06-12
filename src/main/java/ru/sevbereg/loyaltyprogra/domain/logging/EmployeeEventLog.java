@@ -1,17 +1,12 @@
 package ru.sevbereg.loyaltyprogra.domain.logging;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import ru.sevbereg.loyaltyprogra.domain.AbstractIdentifiableEntity;
 import ru.sevbereg.loyaltyprogra.domain.Employee;
 
@@ -35,9 +30,11 @@ public class EmployeeEventLog extends AbstractIdentifiableEntity {
     @Column(name = "c_event_description")
     private String eventDescription;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "JSON", name = "c_old_value")
     private String oldValue;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "JSON", name = "c_new_value")
     private String newValue;
 

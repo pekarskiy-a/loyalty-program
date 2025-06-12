@@ -14,10 +14,7 @@ import ru.sevbereg.loyaltyprogra.tgbotapi.BotStateContext;
 import java.util.Objects;
 import java.util.Optional;
 
-import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.ASK_CARD_INFO;
-import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.ASK_LP_INFO;
-import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.ASK_PHONE_NUMBER;
-import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.ENTER_PHONE_NUMBER;
+import static ru.sevbereg.loyaltyprogra.domain.tgbot.BotState.*;
 
 @Slf4j
 @Service
@@ -48,7 +45,8 @@ public class ClientTgBotHandler extends AbstractTgBotHandler {
             }
 
             BotState botState = switch (inputMessage) {
-                case "/start" -> botStateService.createIfNoExist(userId, chatId, ASK_PHONE_NUMBER, Role.CLIENT).getBotState();
+                case "/start" ->
+                        botStateService.createIfNoExist(userId, chatId, ASK_PHONE_NUMBER, Role.CLIENT).getBotState();
                 case "Информация о карте" -> ASK_CARD_INFO;
                 case "Информация о программе лояльности" -> ASK_LP_INFO;
                 default -> Optional.ofNullable(botStateService.getUserBotStateByTgId(userId))
@@ -58,6 +56,7 @@ public class ClientTgBotHandler extends AbstractTgBotHandler {
 
             return botStateContext.processInputMessage(botState, message);
         } catch (Exception ex) {
+            log.error("Произошла ошибка.", ex);
             return replayMessageService.getReplyMessageFromSource(chatId, "error.unknown");
         }
     }
